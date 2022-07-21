@@ -23,7 +23,7 @@ ui <- dashboardPage(skin="green",
                     ),
                     
                     ##Body outputs.##
-                    dashboardBody(shinyjs::useShinyjs(),tableOutput("TimeTable"),
+                    dashboardBody(shinyjs::useShinyjs(),#tableOutput("TimeTable"),
                                   tableOutput("AncientNightmare12PM"),
                     )
 )
@@ -72,13 +72,13 @@ server <- function(input, output, session) {
       
     }
     
-    output$TimeTable<- renderText({
-      kable(TimeTable, align = "c", caption="<span style='color: black;'><center><strong>Summary of Dice Rolls</strong></center></span>") %>%
-        kable_styling(
-          font_size = 15
-        ) 
-      }
-    )
+    # output$TimeTable<- renderText({
+    #   kable(TimeTable, align = "c", caption="<span style='color: black;'><center><strong>Diagnostic Table</strong></center></span>") %>%
+    #     kable_styling(
+    #       font_size = 15
+    #     ) 
+    #   }
+    # )
     
     TimerDisplayTable<-read_xlsx("TimerDisplayTable.xlsx")
     
