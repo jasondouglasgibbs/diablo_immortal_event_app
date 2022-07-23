@@ -1,6 +1,6 @@
 ##Script to drive Diablo Immortal Timer App.##
 
-library(tidyverse)
+library(dplyr)
 library(readxl)
 library(lubridate)
 library(hms)
