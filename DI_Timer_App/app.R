@@ -3,6 +3,7 @@ library(readxl)
 library(lubridate)
 library(hms)
 library(shinydashboard)
+library(kableExtra)
 TimeTable<-read_xlsx("DI_Lookup_Table.xlsx")
 
 ##Defines the UI.##
@@ -20,7 +21,8 @@ ui <- dashboardPage(skin="green",
                     
                     ##Body outputs.##
                     dashboardBody(#tableOutput("TimeTable"),
-                                  tableOutput("AncientNightmare12PM")
+                                  #textOutput("TimerSTR"), 
+                                  tableOutput("TimeTable")
                     )
 )
 
@@ -117,13 +119,15 @@ server <- function(input, output, session) {
     #   kable(TimeTable, align = "c", caption="<span style='color: black;'><center><strong>Diagnostic Table</strong></center></span>") %>%
     #     kable_styling(
     #       font_size = 15
-    #     ) 
+    #     )
     #   }
     # )
     
     TimerDisplayTable<-read_xlsx("TimerDisplayTable.xlsx")
+    TimerDisplayTable$Countdown<-as_hms(TimerDisplayTable$Countdown)
     
     invalidateLater(1000)
+    TimerDisplayTable$Countdown<-as_hms(TimerDisplayTable$Countdown)
     if(grepl("-", TimeTable[1,"Time_Zone"])){
       TimeTable[1,"Server_Time"]<-force_tz(TimeTable[1,"UTC_Time"]-hours(TimeTable[1,"Time_Zone_Number"]), 'UTC')
     }else{
@@ -133,107 +137,111 @@ server <- function(input, output, session) {
     
     
     ##Ancient Nightmare.##
-    countdowntime<-as.character(round_hms(as_hms(difftime(TimeTable[1, "Ancient_Nightmare_12PM"], TimeTable[1,"Server_Time"])), digits=0))
+    countdowntime<-round_hms(as_hms(difftime(TimeTable[1, "Ancient_Nightmare_12PM"], TimeTable[1,"Server_Time"])), digits=0)
     if(grepl("-",countdowntime)){
-      countdowntime<-"0"
+      countdowntime<-NA
     }else{
-      countdowntime<-as.character(round_hms(as_hms(difftime(TimeTable[1, "Ancient_Nightmare_12PM"], TimeTable[1,"Server_Time"])), digits=0))
+      countdowntime<-round_hms(as_hms(difftime(TimeTable[1, "Ancient_Nightmare_12PM"], TimeTable[1,"Server_Time"])), digits=0)
     }
     
     TimerDisplayTable[1,2]<-countdowntime
     
-    countdowntime<-as.character(round_hms(as_hms(difftime(TimeTable[1, "Ancient_Nightmare_830PM"], TimeTable[1,"Server_Time"])), digits=0))
+    countdowntime<-round_hms(as_hms(difftime(TimeTable[1, "Ancient_Nightmare_830PM"], TimeTable[1,"Server_Time"])), digits=0)
     if(grepl("-",countdowntime)){
-      countdowntime<-"0"
+      countdowntime<-NA
     }else{
-      countdowntime<-as.character(round_hms(as_hms(difftime(TimeTable[1, "Ancient_Nightmare_830PM"], TimeTable[1,"Server_Time"])), digits=0))
+      countdowntime<-round_hms(as_hms(difftime(TimeTable[1, "Ancient_Nightmare_830PM"], TimeTable[1,"Server_Time"])), digits=0)
     }
     
     TimerDisplayTable[2,2]<-countdowntime
     
-    countdowntime<-as.character(round_hms(as_hms(difftime(TimeTable[1, "Ancient_Nightmare_10PM"], TimeTable[1,"Server_Time"])), digits=0))
+    countdowntime<-round_hms(as_hms(difftime(TimeTable[1, "Ancient_Nightmare_10PM"], TimeTable[1,"Server_Time"])), digits=0)
     if(grepl("-",countdowntime)){
-      countdowntime<-"0"
+      countdowntime<-NA
     }else{
-      countdowntime<-as.character(round_hms(as_hms(difftime(TimeTable[1, "Ancient_Nightmare_10PM"], TimeTable[1,"Server_Time"])), digits=0))
+      countdowntime<-round_hms(as_hms(difftime(TimeTable[1, "Ancient_Nightmare_10PM"], TimeTable[1,"Server_Time"])), digits=0)
     }
     
     TimerDisplayTable[3,2]<-countdowntime
-
+    
     
     
     ##Haunted Carriage##
-    countdowntime<-as.character(round_hms(as_hms(difftime(TimeTable[1, "Haunted_Carriage_12PM"], TimeTable[1,"Server_Time"])), digits=0))
+    countdowntime<-round_hms(as_hms(difftime(TimeTable[1, "Haunted_Carriage_12PM"], TimeTable[1,"Server_Time"])), digits=0)
     if(grepl("-",countdowntime)){
-      countdowntime<-"0"
+      countdowntime<-NA
     }else{
-      countdowntime<-as.character(round_hms(as_hms(difftime(TimeTable[1, "Haunted_Carriage_12PM"], TimeTable[1,"Server_Time"])), digits=0))
+      countdowntime<-round_hms(as_hms(difftime(TimeTable[1, "Haunted_Carriage_12PM"], TimeTable[1,"Server_Time"])), digits=0)
     }
     
     TimerDisplayTable[4,2]<-countdowntime
     
     
-    countdowntime<-as.character(round_hms(as_hms(difftime(TimeTable[1, "Haunted_Carriage_830PM"], TimeTable[1,"Server_Time"])), digits=0))
+    countdowntime<-round_hms(as_hms(difftime(TimeTable[1, "Haunted_Carriage_830PM"], TimeTable[1,"Server_Time"])), digits=0)
     if(grepl("-",countdowntime)){
-      countdowntime<-"0"
+      countdowntime<-NA
     }else{
-      countdowntime<-as.character(round_hms(as_hms(difftime(TimeTable[1, "Haunted_Carriage_830PM"], TimeTable[1,"Server_Time"])), digits=0))
+      countdowntime<-round_hms(as_hms(difftime(TimeTable[1, "Haunted_Carriage_830PM"], TimeTable[1,"Server_Time"])), digits=0)
     }
     
     TimerDisplayTable[5,2]<-countdowntime
     
     
-    countdowntime<-as.character(round_hms(as_hms(difftime(TimeTable[1, "Haunted_Carriage_10PM"], TimeTable[1,"Server_Time"])), digits=0))
+    countdowntime<-round_hms(as_hms(difftime(TimeTable[1, "Haunted_Carriage_10PM"], TimeTable[1,"Server_Time"])), digits=0)
     if(grepl("-",countdowntime)){
-      countdowntime<-"0"
+      countdowntime<-NA
     }else{
-      countdowntime<-as.character(round_hms(as_hms(difftime(TimeTable[1, "Haunted_Carriage_10PM"], TimeTable[1,"Server_Time"])), digits=0))
+      countdowntime<-round_hms(as_hms(difftime(TimeTable[1, "Haunted_Carriage_10PM"], TimeTable[1,"Server_Time"])), digits=0)
     }
     
     TimerDisplayTable[6,2]<-countdowntime
     
     ##Demon Gates##
-    countdowntime<-as.character(round_hms(as_hms(difftime(TimeTable[1, "Demon_Gates_12PM"], TimeTable[1,"Server_Time"])), digits=0))
+    countdowntime<-round_hms(as_hms(difftime(TimeTable[1, "Demon_Gates_12PM"], TimeTable[1,"Server_Time"])), digits=0)
     if(grepl("-",countdowntime)){
-      countdowntime<-"0"
+      countdowntime<-NA
     }else{
-      countdowntime<-as.character(round_hms(as_hms(difftime(TimeTable[1, "Demon_Gates_12PM"], TimeTable[1,"Server_Time"])), digits=0))
+      countdowntime<-round_hms(as_hms(difftime(TimeTable[1, "Demon_Gates_12PM"], TimeTable[1,"Server_Time"])), digits=0)
     }
     
     TimerDisplayTable[7,2]<-countdowntime
     
     
-    countdowntime<-as.character(round_hms(as_hms(difftime(TimeTable[1, "Demon_Gates_830PM"], TimeTable[1,"Server_Time"])), digits=0))
+    countdowntime<-round_hms(as_hms(difftime(TimeTable[1, "Demon_Gates_830PM"], TimeTable[1,"Server_Time"])), digits=0)
     if(grepl("-",countdowntime)){
-      countdowntime<-"0"
+      countdowntime<-NA
     }else{
-      countdowntime<-as.character(round_hms(as_hms(difftime(TimeTable[1, "Demon_Gates_830PM"], TimeTable[1,"Server_Time"])), digits=0))
+      countdowntime<-round_hms(as_hms(difftime(TimeTable[1, "Demon_Gates_830PM"], TimeTable[1,"Server_Time"])), digits=0)
     }
     
     TimerDisplayTable[8,2]<-countdowntime
     
     
-    countdowntime<-as.character(round_hms(as_hms(difftime(TimeTable[1, "Demon_Gates_10PM"], TimeTable[1,"Server_Time"])), digits=0))
+    countdowntime<-round_hms(as_hms(difftime(TimeTable[1, "Demon_Gates_10PM"], TimeTable[1,"Server_Time"])), digits=0)
     if(grepl("-",countdowntime)){
-      countdowntime<-"0"
+      countdowntime<-NA
     }else{
-      countdowntime<-as.character(round_hms(as_hms(difftime(TimeTable[1, "Demon_Gates_10PM"], TimeTable[1,"Server_Time"])), digits=0))
+      countdowntime<-round_hms(as_hms(difftime(TimeTable[1, "Demon_Gates_10PM"], TimeTable[1,"Server_Time"])), digits=0)
     }
     
     TimerDisplayTable[9,2]<-countdowntime
-    
-    
-    
+
     #Ordering and preping for display.##
-    TimerDisplayTable<-as.data.frame(filter(TimerDisplayTable, TimerDisplayTable$Countdown!="0"))
+    TimerDisplayTable<-as.data.frame(filter(TimerDisplayTable, !is.na(TimerDisplayTable$Countdown)))
     TimerDisplayTable<-TimerDisplayTable[order(TimerDisplayTable$Countdown, decreasing=FALSE),]
+    rownames(TimerDisplayTable)<-NULL
     
-    
-    
+    # output$TimerSTR<-renderText({
+    #   str(TimerDisplayTable)
+    # })
     # isolate({
-    output$AncientNightmare12PM<-renderTable({
-      TimerDisplayTable
-      }
+    
+    output$TimeTable<- renderText({
+      kable(TimerDisplayTable, align = "c", caption="<span style='color: black;'><center><strong>Event Timers</strong></center></span>") %>%
+        kable_styling(
+          font_size = 15
+        ) 
+    }
     )
     
     
