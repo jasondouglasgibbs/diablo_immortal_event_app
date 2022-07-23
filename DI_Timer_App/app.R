@@ -36,6 +36,9 @@ server <- function(input, output, session) {
     TimeTable$Haunted_Carriage_12PM<-as.POSIXct(TimeTable$Haunted_Carriage_12PM, tz="UTC")
     TimeTable$Haunted_Carriage_830PM<-as.POSIXct(TimeTable$Haunted_Carriage_830PM, tz="UTC")
     TimeTable$Haunted_Carriage_10PM<-as.POSIXct(TimeTable$Haunted_Carriage_10PM, tz="UTC")
+    TimeTable$Demon_Gates_12PM<-as.POSIXct(TimeTable$Demon_Gates_12PM, tz="UTC")
+    TimeTable$Demon_Gates_830PM<-as.POSIXct(TimeTable$Demon_Gates_830PM, tz="UTC")
+    TimeTable$Demon_Gates_10PM<-as.POSIXct(TimeTable$Demon_Gates_10PM, tz="UTC")
     TimeTable$System_Time<-now()
     TimeTable$UTC_Time<-now("UTC")
     TimeTable<-as.data.frame(TimeTable)
@@ -85,6 +88,24 @@ server <- function(input, output, session) {
       
       TimeTable[i, "Haunted_Carriage_10PM"]<-force_tz(HCDay,'UTC')
       TimeTable[i, "Haunted_Carriage_10PM"]<-as.POSIXct(paste0(date(TimeTable[i, "Haunted_Carriage_10PM"])," ", "22:00:00"), tz='UTC')
+      
+      ##DemonGates##
+      DGDate<-weekdays(TimeTable[i, "Server_Time"])
+      DGDay<-TimeTable[i,"Server_Time"]
+      while(DGDate!="Sunday"&&DGDate!="Monday"&&DGDate!="Thursday"){
+        DGDay<-DGDay+days(1)
+        DGDate<-weekdays(DGDay)
+      }
+      
+      TimeTable[i, "Demon_Gates_12PM"]<-force_tz(DGDay,'UTC')
+      TimeTable[i, "Demon_Gates_12PM"]<-as.POSIXct(paste0(date(TimeTable[i, "Demon_Gates_12PM"])," ", "12:00:00"), tz='UTC')
+      
+      TimeTable[i, "Demon_Gates_830PM"]<-force_tz(DGDay,'UTC')
+      TimeTable[i, "Demon_Gates_830PM"]<-as.POSIXct(paste0(date(TimeTable[i, "Demon_Gates_830PM"])," ", "20:30:00"), tz='UTC')
+      
+      TimeTable[i, "Demon_Gates_10PM"]<-force_tz(DGDay,'UTC')
+      TimeTable[i, "Demon_Gates_10PM"]<-as.POSIXct(paste0(date(TimeTable[i, "Demon_Gates_10PM"])," ", "22:00:00"), tz='UTC')
+      
       
       
       
@@ -170,6 +191,37 @@ server <- function(input, output, session) {
     }
     
     TimerDisplayTable[6,2]<-countdowntime
+    
+    ##Demon Gates##
+    countdowntime<-as.character(round_hms(as_hms(difftime(TimeTable[1, "Demon_Gates_12PM"], TimeTable[1,"Server_Time"])), digits=0))
+    if(grepl("-",countdowntime)){
+      countdowntime<-"0"
+    }else{
+      countdowntime<-as.character(round_hms(as_hms(difftime(TimeTable[1, "Demon_Gates_12PM"], TimeTable[1,"Server_Time"])), digits=0))
+    }
+    
+    TimerDisplayTable[7,2]<-countdowntime
+    
+    
+    countdowntime<-as.character(round_hms(as_hms(difftime(TimeTable[1, "Demon_Gates_830PM"], TimeTable[1,"Server_Time"])), digits=0))
+    if(grepl("-",countdowntime)){
+      countdowntime<-"0"
+    }else{
+      countdowntime<-as.character(round_hms(as_hms(difftime(TimeTable[1, "Demon_Gates_830PM"], TimeTable[1,"Server_Time"])), digits=0))
+    }
+    
+    TimerDisplayTable[8,2]<-countdowntime
+    
+    
+    countdowntime<-as.character(round_hms(as_hms(difftime(TimeTable[1, "Demon_Gates_10PM"], TimeTable[1,"Server_Time"])), digits=0))
+    if(grepl("-",countdowntime)){
+      countdowntime<-"0"
+    }else{
+      countdowntime<-as.character(round_hms(as_hms(difftime(TimeTable[1, "Demon_Gates_10PM"], TimeTable[1,"Server_Time"])), digits=0))
+    }
+    
+    TimerDisplayTable[9,2]<-countdowntime
+    
     
     
     #Ordering and preping for display.##
