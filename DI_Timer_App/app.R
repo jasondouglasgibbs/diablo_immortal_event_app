@@ -42,6 +42,8 @@ server <- function(input, output, session) {
     TimeTable$Demon_Gates_12PM<-as.POSIXct(TimeTable$Demon_Gates_12PM, tz="UTC")
     TimeTable$Demon_Gates_830PM<-as.POSIXct(TimeTable$Demon_Gates_830PM, tz="UTC")
     TimeTable$Demon_Gates_10PM<-as.POSIXct(TimeTable$Demon_Gates_10PM, tz="UTC")
+    TimeTable$Ancient_Arena_930PM<-as.POSIXct(TimeTable$Ancient_Arena_930PM, tz="UTC")
+
     ##Gets the system time and UTC time.##
     TimeTable$System_Time<-now()
     TimeTable$UTC_Time<-now("UTC")
@@ -114,7 +116,16 @@ server <- function(input, output, session) {
       TimeTable[i, "Demon_Gates_10PM"]<-as.POSIXct(paste0(date(TimeTable[i, "Demon_Gates_10PM"])," ", "22:00:00"), tz='UTC')
       
       
+      ##Ancient Arena##
+      AADate<-weekdays(TimeTable[i, "Server_Time"])
+      AADay<-TimeTable[i,"Server_Time"]
+      while(AADate!="Sunday"&&AADate!="Tuesday"&&AADate!="Thursday"&AADate!="Saturday"){
+        AADay<-AADay+days(1)
+        AADate<-weekdays(AADay)
+      }
       
+      TimeTable[i, "Ancient_Arena_930PM"]<-force_tz(AADay,'UTC')
+      TimeTable[i, "Ancient_Arena_930PM"]<-as.POSIXct(paste0(date(TimeTable[i, "Ancient_Arena_930PM"])," ", "21:30:00"), tz='UTC')
       
       
       
@@ -232,6 +243,22 @@ server <- function(input, output, session) {
     }
     
     TimerDisplayTable[9,2]<-countdowntime
+    
+    
+    
+    
+    
+    ##Ancient Arena.##
+    countdowntime<-round_hms(as_hms(difftime(TimeTable[1, "Ancient_Arena_930PM"], TimeTable[1,"Server_Time"])), digits=0)
+    if(grepl("-",countdowntime)){
+      countdowntime<-NA
+    }else{
+      countdowntime<-round_hms(as_hms(difftime(TimeTable[1, "Ancient_Arena_930PM"], TimeTable[1,"Server_Time"])), digits=0)
+    }
+    
+    TimerDisplayTable[10,2]<-countdowntime
+    
+    
 
     #Ordering and preping for display.##
     ##Filters out any countdown values that are NA, orders by countdown timer, and resets the rownames##
@@ -246,7 +273,7 @@ server <- function(input, output, session) {
 
     
     output$TimerTable<- renderText({
-      kable(TimerDisplayTable, align = "c", caption="<span style='color: black;'><center><strong>Event Timers</strong></center></span>") %>%
+      kable(TimerDisplayTable, align = "c", caption="<span style='color: black;'><center><strong>World Event Timers</strong></center></span>") %>%
         kable_styling(
           font_size = 15
         ) 
