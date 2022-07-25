@@ -20,7 +20,7 @@ ui <- dashboardPage(skin="green",
                     ),
                     
                     ##Body outputs.##
-                    dashboardBody(tableOutput("DiagnosticTimeTable"),
+                    dashboardBody(#tableOutput("DiagnosticTimeTable"),
                                   #textOutput("TimerSTR"), 
                                   tableOutput("TimerTable")
                     )
@@ -122,13 +122,13 @@ server <- function(input, output, session) {
     
     
     ##Diagnostic output table that will render the TimeTable on the Shiny App.##
-    output$DiagnosticTimeTable<- renderText({
-      kable(TimeTable, align = "c", caption="<span style='color: black;'><center><strong>Diagnostic Table</strong></center></span>") %>%
-        kable_styling(
-          font_size = 15
-        )
-      }
-    )
+    # output$DiagnosticTimeTable<- renderText({
+    #   kable(TimeTable, align = "c", caption="<span style='color: black;'><center><strong>Diagnostic Table</strong></center></span>") %>%
+    #     kable_styling(
+    #       font_size = 15
+    #     )%>% scroll_box(width = "100%")
+    #   }
+    # )
     
     
     ##World Event Countdown Portion.##
