@@ -20,16 +20,17 @@ ui <- dashboardPage(skin="green",
                     ),
                     
                     ##Body outputs.##
-                    dashboardBody(#tableOutput("TimeTable"),
+                    dashboardBody(tableOutput("DiagnosticTimeTable"),
                                   #textOutput("TimerSTR"), 
-                                  tableOutput("TimeTable")
+                                  tableOutput("TimerTable")
                     )
 )
 
-# Define server logic required to draw a histogram
+##Server Logic##
 server <- function(input, output, session) {
   ##Script to drive Diablo Immortal Timer App.##
   observe({
+    ##Coerces dataframe columns to the proper class.##
     TimeTable$Time_Zone_Number<-as.integer(TimeTable$Time_Zone_Number)
     TimeTable$Server_Time<-as.POSIXct(TimeTable$Server_Time, tz="UTC")
     TimeTable$Ancient_Nightmare_12PM<-as.POSIXct(TimeTable$Ancient_Nightmare_12PM, tz="UTC")
@@ -41,13 +42,15 @@ server <- function(input, output, session) {
     TimeTable$Demon_Gates_12PM<-as.POSIXct(TimeTable$Demon_Gates_12PM, tz="UTC")
     TimeTable$Demon_Gates_830PM<-as.POSIXct(TimeTable$Demon_Gates_830PM, tz="UTC")
     TimeTable$Demon_Gates_10PM<-as.POSIXct(TimeTable$Demon_Gates_10PM, tz="UTC")
+    ##Gets the system time and UTC time.##
     TimeTable$System_Time<-now()
     TimeTable$UTC_Time<-now("UTC")
     TimeTable<-as.data.frame(TimeTable)
+    ##Filters DF to only include the selected server name.##
     TimeTable<-filter(TimeTable, TimeTable$Server_Name==isolate(input$server))
     
     for(i in 1:nrow(TimeTable)){
-      ##Finds server time based on the current UTC time.##
+      ##Finds the Diablo Immortal server time based on the current UTC time.##
       if(grepl("-", TimeTable[i,"Time_Zone"])){
         TimeTable[i,"Server_Time"]<-force_tz(TimeTable[i,"UTC_Time"]-hours(TimeTable[i,"Time_Zone_Number"]), 'UTC')
       }else{
@@ -59,11 +62,13 @@ server <- function(input, output, session) {
       ##Ancient Nightmare.##
       NightMareDate<-weekdays(TimeTable[i, "Server_Time"])
       NightMareDay<-TimeTable[i,"Server_Time"]
+      ##Iterates the day until a Wednesday or a Friday occurs.##
       while(NightMareDate!="Wednesday"&&NightMareDate!="Friday"){
         NightMareDay<-NightMareDay+days(1)
         NightMareDate<-weekdays(NightMareDay)
       }
       
+      ##Assigns the next time for the event.##
       TimeTable[i, "Ancient_Nightmare_12PM"]<-force_tz(NightMareDay,'UTC')
       TimeTable[i, "Ancient_Nightmare_12PM"]<-as.POSIXct(paste0(date(TimeTable[i, "Ancient_Nightmare_12PM"])," ", "12:00:00"), tz='UTC')
       
@@ -115,28 +120,30 @@ server <- function(input, output, session) {
       
     }
     
-    # output$TimeTable<- renderText({
-    #   kable(TimeTable, align = "c", caption="<span style='color: black;'><center><strong>Diagnostic Table</strong></center></span>") %>%
-    #     kable_styling(
-    #       font_size = 15
-    #     )
-    #   }
-    # )
     
+    ##Diagnostic output table that will render the TimeTable on the Shiny App.##
+    output$DiagnosticTimeTable<- renderText({
+      kable(TimeTable, align = "c", caption="<span style='color: black;'><center><strong>Diagnostic Table</strong></center></span>") %>%
+        kable_styling(
+          font_size = 15
+        )
+      }
+    )
+    
+    
+    ##World Event Countdown Portion.##
+    ##Reads in Timer XLSX and coerces countdown to hours, minutes, seconds format.##
     TimerDisplayTable<-read_xlsx("TimerDisplayTable.xlsx")
     TimerDisplayTable$Countdown<-as_hms(TimerDisplayTable$Countdown)
     
+    ##invalidateLater causes the server to recalculate the time every second, creating the "countdown" effect".##
     invalidateLater(1000)
     TimerDisplayTable$Countdown<-as_hms(TimerDisplayTable$Countdown)
-    if(grepl("-", TimeTable[1,"Time_Zone"])){
-      TimeTable[1,"Server_Time"]<-force_tz(TimeTable[1,"UTC_Time"]-hours(TimeTable[1,"Time_Zone_Number"]), 'UTC')
-    }else{
-      TimeTable[1,"Server_Time"]<-force_tz(TimeTable[1,"UTC_Time"]+hours(TimeTable[1,"Time_Zone_Number"]), 'UTC')
-      
-    }
-    
+
     
     ##Ancient Nightmare.##
+    ##Finds the time difference between the event start time and the server time. Converts to hms format and rounds.##
+    ##If the time difference is negative, NA is assigned and later filtered out.##
     countdowntime<-round_hms(as_hms(difftime(TimeTable[1, "Ancient_Nightmare_12PM"], TimeTable[1,"Server_Time"])), digits=0)
     if(grepl("-",countdowntime)){
       countdowntime<-NA
@@ -227,6 +234,8 @@ server <- function(input, output, session) {
     TimerDisplayTable[9,2]<-countdowntime
 
     #Ordering and preping for display.##
+    ##Filters out any countdown values that are NA, orders by countdown timer, and resets the rownames##
+    ##in order to prevent them from being displayed in the kable table.##
     TimerDisplayTable<-as.data.frame(filter(TimerDisplayTable, !is.na(TimerDisplayTable$Countdown)))
     TimerDisplayTable<-TimerDisplayTable[order(TimerDisplayTable$Countdown, decreasing=FALSE),]
     rownames(TimerDisplayTable)<-NULL
@@ -234,9 +243,9 @@ server <- function(input, output, session) {
     # output$TimerSTR<-renderText({
     #   str(TimerDisplayTable)
     # })
-    # isolate({
+
     
-    output$TimeTable<- renderText({
+    output$TimerTable<- renderText({
       kable(TimerDisplayTable, align = "c", caption="<span style='color: black;'><center><strong>Event Timers</strong></center></span>") %>%
         kable_styling(
           font_size = 15
@@ -245,9 +254,6 @@ server <- function(input, output, session) {
     )
     
     
-    
-    # }
-    # )
     
   }
   )
