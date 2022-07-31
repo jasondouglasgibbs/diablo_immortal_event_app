@@ -18,6 +18,7 @@ TimeTable$Haunted_Carriage_10PM<-as.POSIXct(TimeTable$Haunted_Carriage_10PM, tz=
 TimeTable$Demon_Gates_12PM<-as.POSIXct(TimeTable$Demon_Gates_12PM, tz="UTC")
 TimeTable$Demon_Gates_830PM<-as.POSIXct(TimeTable$Demon_Gates_830PM, tz="UTC")
 TimeTable$Demon_Gates_10PM<-as.POSIXct(TimeTable$Demon_Gates_10PM, tz="UTC")
+TimeTable$Ancient_Arena_930PM<-as.POSIXct(TimeTable$Ancient_Arena_930PM, tz="UTC")
 TimeTable$System_Time<-now()
 TimeTable$UTC_Time<-now("UTC")
 TimeTable<-as.data.frame(TimeTable)
@@ -87,7 +88,16 @@ for(i in 1:nrow(TimeTable)){
   TimeTable[i, "Demon_Gates_10PM"]<-force_tz(DGDay,'UTC')
   TimeTable[i, "Demon_Gates_10PM"]<-as.POSIXct(paste0(date(TimeTable[i, "Demon_Gates_10PM"])," ", "22:00:00"), tz='UTC')
   
+  ##Ancient Arena##
+  AADate<-weekdays(TimeTable[i, "Server_Time"])
+  AADay<-TimeTable[i,"Server_Time"]
+  while(AADate!="Sunday"&&AADate!="Tuesday"&&AADate!="Thursday"&AADate!="Saturday"){
+    AADay<-AADay+days(1)
+    AADate<-weekdays(AADay)
+  }
   
+  TimeTable[i, "Ancient_Arena_930PM"]<-force_tz(AADay,'UTC')
+  TimeTable[i, "Ancient_Arena_930PM"]<-as.POSIXct(paste0(date(TimeTable[i, "Ancient_Arena_930PM"])," ", "21:30:00"), tz='UTC')
   
 }
 
@@ -194,6 +204,16 @@ if(grepl("-",countdowntime)){
 }
 
 TimerDisplayTable[9,2]<-countdowntime
+
+##Ancient Arena.##
+countdowntime<-round_hms(as_hms(difftime(TimeTable[1, "Ancient_Arena_930PM"], TimeTable[1,"Server_Time"])), digits=0)
+if(grepl("-",countdowntime)){
+  countdowntime<-NA
+}else{
+  countdowntime<-round_hms(as_hms(difftime(TimeTable[1, "Ancient_Arena_930PM"], TimeTable[1,"Server_Time"])), digits=0)
+}
+
+TimerDisplayTable[10,2]<-countdowntime
 
 
 #Ordering and preping for display.##
