@@ -243,13 +243,15 @@ for(i in 1:1){
   
   SADate<-weekdays(TimeTable[i, "Server_Time"])
   SADay<-TimeTable[i,"Server_Time"]
-  while(SADate=="Sunday"){
-    SADay<-SADay+days(1)
-    SADate<-weekdays(SADay)
+  if(SADate=="Sunday"){
+    ShadowTimeTable[i+2, "Active?"]<-NA
+  }else{
+    ShadowTimeTable[i+2, "Start"]<-as.POSIXct(paste0(date(TimeTable[1, "Server_Time"])," ", "18:00:00"), tz='UTC')
+    ShadowTimeTable[i+2, "Stop"]<-as.POSIXct(paste0(date(TimeTable[1, "Server_Time"])," ", "20:00:00"), tz='UTC')
   }
   
-  ShadowTimeTable[i+2, "Start"]<-as.POSIXct(paste0(date(TimeTable[1, "Server_Time"])," ", "18:00:00"), tz='UTC')
-  ShadowTimeTable[i+2, "Stop"]<-as.POSIXct(paste0(date(TimeTable[1, "Server_Time"])," ", "20:00:00"), tz='UTC')
+  
+
   
   
   ##Countedown Timers##
