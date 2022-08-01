@@ -318,7 +318,7 @@ server <- function(input, output, session) {
         ShadowTimeTable[i,"Active?"]<-NA
       }else if(difftime(ShadowTimeTable[i, "Start"], TimeTable[1,"Server_Time"])>=0){
         ShadowTimeTable[i,"Active?"]<-"No"
-      }else if(difftime(ShadowTimeTable[i, "Start"], TimeTable[1,"Server_Time"])>=0&&difftime(ShadowTimeTable[i, "Stop"], TimeTable[1,"Server_Time"])>=0){
+      }else if(difftime(ShadowTimeTable[i, "Start"], TimeTable[1,"Server_Time"])<=0&&difftime(ShadowTimeTable[i, "Stop"], TimeTable[1,"Server_Time"])>=0){
         ShadowTimeTable[i,"Active?"]<-"Yes"
       }else{
         ShadowTimeTable[i,"Active?"]<-NA
@@ -338,7 +338,7 @@ server <- function(input, output, session) {
         ShadowTimeTable[i+1,"Active?"]<-NA
       }else if(difftime(ShadowTimeTable[i+1, "Start"], TimeTable[1,"Server_Time"])>=0){
         ShadowTimeTable[i+1,"Active?"]<-"No"
-      }else if(difftime(ShadowTimeTable[i+1, "Start"], TimeTable[1,"Server_Time"])>=0&&difftime(ShadowTimeTable[i+1, "Stop"], TimeTable[1,"Server_Time"])>=0){
+      }else if(difftime(ShadowTimeTable[i+1, "Start"], TimeTable[1,"Server_Time"])<=0&&difftime(ShadowTimeTable[i+1, "Stop"], TimeTable[1,"Server_Time"])>=0){
         ShadowTimeTable[i+1,"Active?"]<-"Yes"
       }else{
         ShadowTimeTable[i+1,"Active?"]<-NA
@@ -361,7 +361,7 @@ server <- function(input, output, session) {
         ShadowTimeTable[i+2,"Active?"]<-NA
       }else if(difftime(ShadowTimeTable[i+2, "Start"], TimeTable[1,"Server_Time"])>=0){
         ShadowTimeTable[i+2,"Active?"]<-"No"
-      }else if(difftime(ShadowTimeTable[i+2, "Start"], TimeTable[1,"Server_Time"])>=0&&difftime(ShadowTimeTable[i+2, "Stop"], TimeTable[1,"Server_Time"])>=0){
+      }else if(difftime(ShadowTimeTable[i+2, "Start"], TimeTable[1,"Server_Time"])<=0&&difftime(ShadowTimeTable[i+2, "Stop"], TimeTable[1,"Server_Time"])>=0){
         ShadowTimeTable[i+2,"Active?"]<-"Yes"
       }else{
         ShadowTimeTable[i+2,"Active?"]<-NA
