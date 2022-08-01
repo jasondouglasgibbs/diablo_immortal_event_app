@@ -5,6 +5,7 @@ library(hms)
 library(shinydashboard)
 library(kableExtra)
 TimeTable<-read_xlsx("DI_Lookup_Table.xlsx")
+ShadowTimeTable<-read_xlsx("Shadow_Lookup_Table.xlsx")
 
 ##Defines the UI.##
 ui <- dashboardPage(skin="green",
@@ -22,7 +23,8 @@ ui <- dashboardPage(skin="green",
                     ##Body outputs.##
                     dashboardBody(#tableOutput("DiagnosticTimeTable"),
                                   #textOutput("TimerSTR"), 
-                                  tableOutput("TimerTable")
+                                  tableOutput("TimerTable"),
+                                  tableOutput("ShadowTimerTabler")
                     )
 )
 
@@ -270,10 +272,118 @@ server <- function(input, output, session) {
     # output$TimerSTR<-renderText({
     #   str(TimerDisplayTable)
     # })
+    
+    
+    ##Shadow War Timers##
+    ShadowTimeTable$Start<-as.POSIXct(ShadowTimeTable$Start, tz="UTC")
+    ShadowTimeTable$Stop<-as.POSIXct(ShadowTimeTable$Stop, tz="UTC")
+    ShadowTimeTable$Countdown<-as_hms(ShadowTimeTable$Countdown)
+    ShadowTimeTable$`Active?`<-as.character(ShadowTimeTable$`Active?`)
+    ShadowTimeTable<-as.data.frame(ShadowTimeTable)
+    
+    for(i in 1:1){
+      ##Raid the Vault##
+      ShadowTimeTable[i, "Start"]<-as.POSIXct(paste0(date(TimeTable[1, "Server_Time"])," ", "12:00:00"), tz='UTC')
+      ShadowTimeTable[i, "Stop"]<-as.POSIXct(paste0(date(TimeTable[1, "Server_Time"])," ", "14:00:00"), tz='UTC')
+      ShadowTimeTable[i+1, "Start"]<-as.POSIXct(paste0(date(TimeTable[1, "Server_Time"])," ", "19:00:00"), tz='UTC')
+      ShadowTimeTable[i+1, "Stop"]<-as.POSIXct(paste0(date(TimeTable[1, "Server_Time"])," ", "21:00:00"), tz='UTC')
+      
+      #Shadow Assembly##
+      
+      SADate<-weekdays(TimeTable[i, "Server_Time"])
+      SADay<-TimeTable[i,"Server_Time"]
+      while(SADate=="Sunday"){
+        SADay<-SADay+days(1)
+        SADate<-weekdays(SADay)
+      }
+      
+      ShadowTimeTable[i+2, "Start"]<-as.POSIXct(paste0(date(TimeTable[1, "Server_Time"])," ", "18:00:00"), tz='UTC')
+      ShadowTimeTable[i+2, "Stop"]<-as.POSIXct(paste0(date(TimeTable[1, "Server_Time"])," ", "20:00:00"), tz='UTC')
+      
+      
+      ##Countedown Timers##
+      
+      ##Raid the Vault##
+      countdowntime<-round_hms(as_hms(difftime(ShadowTimeTable[i, "Start"], TimeTable[1,"Server_Time"])), digits=0)
+      if(grepl("-",countdowntime)){
+        countdowntime<-NA
+      }else{
+        countdowntime<-round_hms(as_hms(difftime(ShadowTimeTable[i, "Start"], TimeTable[1,"Server_Time"])), digits=0)
+      }
+      
+      ShadowTimeTable[i,"Countdown"]<-countdowntime
+      ##Active Logic.##
+      if(difftime(ShadowTimeTable[i, "Stop"], TimeTable[1,"Server_Time"])<0){
+        ShadowTimeTable[i,"Active?"]<-NA
+      }else if(difftime(ShadowTimeTable[i, "Start"], TimeTable[1,"Server_Time"])>=0){
+        ShadowTimeTable[i,"Active?"]<-"No"
+      }else if(difftime(ShadowTimeTable[i, "Start"], TimeTable[1,"Server_Time"])>=0&&difftime(ShadowTimeTable[i, "Stop"], TimeTable[1,"Server_Time"])>=0){
+        ShadowTimeTable[i,"Active?"]<-"Yes"
+      }else{
+        ShadowTimeTable[i,"Active?"]<-NA
+      }
+      
+      
+      countdowntime<-round_hms(as_hms(difftime(ShadowTimeTable[i+1, "Start"], TimeTable[1,"Server_Time"])), digits=0)
+      if(grepl("-",countdowntime)){
+        countdowntime<-NA
+      }else{
+        countdowntime<-round_hms(as_hms(difftime(ShadowTimeTable[i+1, "Start"], TimeTable[1,"Server_Time"])), digits=0)
+      }
+      
+      ShadowTimeTable[i+1,"Countdown"]<-countdowntime
+      ##Active Logic.##
+      if(difftime(ShadowTimeTable[i+1, "Stop"], TimeTable[1,"Server_Time"])<0){
+        ShadowTimeTable[i+1,"Active?"]<-NA
+      }else if(difftime(ShadowTimeTable[i+1, "Start"], TimeTable[1,"Server_Time"])>=0){
+        ShadowTimeTable[i+1,"Active?"]<-"No"
+      }else if(difftime(ShadowTimeTable[i+1, "Start"], TimeTable[1,"Server_Time"])>=0&&difftime(ShadowTimeTable[i+1, "Stop"], TimeTable[1,"Server_Time"])>=0){
+        ShadowTimeTable[i+1,"Active?"]<-"Yes"
+      }else{
+        ShadowTimeTable[i+1,"Active?"]<-NA
+      }
+      
+      
+      
+      ##Shadow Assembly##
+      countdowntime<-round_hms(as_hms(difftime(ShadowTimeTable[i+2, "Start"], TimeTable[1,"Server_Time"])), digits=0)
+      if(grepl("-",countdowntime)){
+        countdowntime<-NA
+      }else{
+        countdowntime<-round_hms(as_hms(difftime(ShadowTimeTable[i+2, "Start"], TimeTable[1,"Server_Time"])), digits=0)
+      }
+      
+      ShadowTimeTable[i+2,"Countdown"]<-countdowntime
+      
+      ##Active Logic.##
+      if(difftime(ShadowTimeTable[i+2, "Stop"], TimeTable[1,"Server_Time"])<0){
+        ShadowTimeTable[i+2,"Active?"]<-NA
+      }else if(difftime(ShadowTimeTable[i+2, "Start"], TimeTable[1,"Server_Time"])>=0){
+        ShadowTimeTable[i+2,"Active?"]<-"No"
+      }else if(difftime(ShadowTimeTable[i+2, "Start"], TimeTable[1,"Server_Time"])>=0&&difftime(ShadowTimeTable[i+2, "Stop"], TimeTable[1,"Server_Time"])>=0){
+        ShadowTimeTable[i+2,"Active?"]<-"Yes"
+      }else{
+        ShadowTimeTable[i+2,"Active?"]<-NA
+      }
+      
+      
+    }
+    
+    ShadowTimeTable<-as.data.frame(filter(ShadowTimeTable, !is.na(ShadowTimeTable$Active)))
+    ShadowTimeTable<-ShadowTimeTable[order(ShadowTimeTable$Countdown, decreasing=FALSE),]
+    rownames(ShadowTimeTable)<-NULL
 
     
     output$TimerTable<- renderText({
       kable(TimerDisplayTable, align = "c", caption="<span style='color: black;'><center><strong>World Event Timers</strong></center></span>") %>%
+        kable_styling(
+          font_size = 15
+        ) 
+    }
+    )
+    
+    output$ShadowTimerTabler<- renderText({
+      kable(ShadowTimeTable, align = "c", caption="<span style='color: black;'><center><strong>Shadow Event Timers</strong></center></span>") %>%
         kable_styling(
           font_size = 15
         ) 
