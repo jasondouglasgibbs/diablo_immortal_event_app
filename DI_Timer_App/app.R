@@ -307,7 +307,7 @@ server <- function(input, output, session) {
       ##Raid the Vault##
       countdowntime<-round_hms(as_hms(difftime(ShadowTimeTable[i, "Start"], TimeTable[1,"Server_Time"])), digits=0)
       if(grepl("-",countdowntime)){
-        countdowntime<-NA
+        countdowntime<-as_hms("00:00:00")
       }else{
         countdowntime<-round_hms(as_hms(difftime(ShadowTimeTable[i, "Start"], TimeTable[1,"Server_Time"])), digits=0)
       }
@@ -327,7 +327,7 @@ server <- function(input, output, session) {
       
       countdowntime<-round_hms(as_hms(difftime(ShadowTimeTable[i+1, "Start"], TimeTable[1,"Server_Time"])), digits=0)
       if(grepl("-",countdowntime)){
-        countdowntime<-NA
+        countdowntime<-as_hms("00:00:00")
       }else{
         countdowntime<-round_hms(as_hms(difftime(ShadowTimeTable[i+1, "Start"], TimeTable[1,"Server_Time"])), digits=0)
       }
@@ -349,7 +349,7 @@ server <- function(input, output, session) {
       ##Shadow Assembly##
       countdowntime<-round_hms(as_hms(difftime(ShadowTimeTable[i+2, "Start"], TimeTable[1,"Server_Time"])), digits=0)
       if(grepl("-",countdowntime)){
-        countdowntime<-NA
+        countdowntime<-as_hms("00:00:00")
       }else{
         countdowntime<-round_hms(as_hms(difftime(ShadowTimeTable[i+2, "Start"], TimeTable[1,"Server_Time"])), digits=0)
       }
