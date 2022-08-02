@@ -224,7 +224,7 @@ TimerDisplayTable<-TimerDisplayTable[order(TimerDisplayTable$Countdown, decreasi
 
 
 
-##Shadow War Timers##
+##Shadow Event Timers##
 ShadowTimeTable<-read_xlsx("Shadow_Lookup_Table.xlsx")
 ShadowTimeTable$Start<-as.POSIXct(ShadowTimeTable$Start, tz="UTC")
 ShadowTimeTable$Stop<-as.POSIXct(ShadowTimeTable$Stop, tz="UTC")
@@ -251,10 +251,39 @@ for(i in 1:1){
   }
   
   
-
+  ##Battlegrounds##
+  ShadowTimeTable[i+3, "Start"]<-as.POSIXct(paste0(date(TimeTable[1, "Server_Time"])," ", "08:00:00"), tz='UTC')
+  ShadowTimeTable[i+3, "Stop"]<-as.POSIXct(paste0(date(TimeTable[1, "Server_Time"])," ", "10:00:00"), tz='UTC')
+  ShadowTimeTable[i+4, "Start"]<-as.POSIXct(paste0(date(TimeTable[1, "Server_Time"])," ", "12:00:00"), tz='UTC')
+  ShadowTimeTable[i+4, "Stop"]<-as.POSIXct(paste0(date(TimeTable[1, "Server_Time"])," ", "14:00:00"), tz='UTC')
+  ShadowTimeTable[i+5, "Start"]<-as.POSIXct(paste0(date(TimeTable[1, "Server_Time"])," ", "18:00:00"), tz='UTC')
+  ShadowTimeTable[i+5, "Stop"]<-as.POSIXct(paste0(date(TimeTable[1, "Server_Time"])," ", "20:00:00"), tz='UTC')
+  ShadowTimeTable[i+6, "Start"]<-as.POSIXct(paste0(date(TimeTable[1, "Server_Time"])," ", "22:00:00"), tz='UTC')
+  ShadowTimeTable[i+6, "Stop"]<-as.POSIXct(paste0(date(TimeTable[1, "Server_Time"])," ", "11:59:59"), tz='UTC')
+  
+  ##Shadow Lottery##
+  ShadowTimeTable[i+7, "Start"]<-as.POSIXct(paste0(date(TimeTable[1, "Server_Time"])," ", "12:00:00"), tz='UTC')
+  ShadowTimeTable[i+7, "Stop"]<-as.POSIXct(paste0(date(TimeTable[1, "Server_Time"])," ", "13:00:00"), tz='UTC')
+  ShadowTimeTable[i+8, "Start"]<-as.POSIXct(paste0(date(TimeTable[1, "Server_Time"])," ", "18:00:00"), tz='UTC')
+  ShadowTimeTable[i+8, "Stop"]<-as.POSIXct(paste0(date(TimeTable[1, "Server_Time"])," ", "19:00:00"), tz='UTC')
+  ShadowTimeTable[i+9, "Start"]<-as.POSIXct(paste0(date(TimeTable[1, "Server_Time"])," ", "21:00:00"), tz='UTC')
+  ShadowTimeTable[i+9, "Stop"]<-as.POSIXct(paste0(date(TimeTable[1, "Server_Time"])," ", "22:00:00"), tz='UTC')
   
   
-  ##Countedown Timers##
+  ##Shadow War##
+  SWDate<-weekdays(TimeTable[i, "Server_Time"])
+  SWDay<-TimeTable[i,"Server_Time"]
+  while(SWDate!="Thursday"&&SWDate!="Saturday"){
+    SWDay<-SWDay+days(1)
+    SWDate<-weekdays(SWDay)
+  }
+  
+  ShadowTimeTable[i+10, "Start"]<-as.POSIXct(paste0(date(SWDay)," ", "19:00:00"), tz='UTC')
+  ShadowTimeTable[i+10, "Stop"]<-as.POSIXct(paste0(date(SWDay)," ", "21:00:00"), tz='UTC')
+  
+  
+  
+  ##Countdown Timers##
   
   ##Raid the Vault##
   countdowntime<-round_hms(as_hms(difftime(ShadowTimeTable[i, "Start"], TimeTable[1,"Server_Time"])), digits=0)
@@ -318,7 +347,172 @@ for(i in 1:1){
       }else{
         ShadowTimeTable[i+2,"Active?"]<-NA
       }
-      
+  
+  
+  ##Battlegrounds##
+  countdowntime<-round_hms(as_hms(difftime(ShadowTimeTable[i+3, "Start"], TimeTable[1,"Server_Time"])), digits=0)
+  if(grepl("-",countdowntime)){
+    countdowntime<-as_hms("00:00:00")
+  }else{
+    countdowntime<-round_hms(as_hms(difftime(ShadowTimeTable[i+3, "Start"], TimeTable[1,"Server_Time"])), digits=0)
+  }
+  
+  ShadowTimeTable[i+3,"Countdown"]<-countdowntime
+  
+    ##Active Logic.##
+    if(difftime(ShadowTimeTable[i+3, "Stop"], TimeTable[1,"Server_Time"])<0){
+      ShadowTimeTable[i+3,"Active?"]<-NA
+    }else if(difftime(ShadowTimeTable[i+3, "Start"], TimeTable[1,"Server_Time"])>=0){
+      ShadowTimeTable[i+3,"Active?"]<-"No"
+    }else if(difftime(ShadowTimeTable[i+3, "Start"], TimeTable[1,"Server_Time"])<=0&&difftime(ShadowTimeTable[i+3, "Stop"], TimeTable[1,"Server_Time"])>=0){
+      ShadowTimeTable[i+3,"Active?"]<-"Yes"
+    }else{
+      ShadowTimeTable[i+3,"Active?"]<-NA
+    }
+  
+  
+  countdowntime<-round_hms(as_hms(difftime(ShadowTimeTable[i+4, "Start"], TimeTable[1,"Server_Time"])), digits=0)
+  if(grepl("-",countdowntime)){
+    countdowntime<-as_hms("00:00:00")
+  }else{
+    countdowntime<-round_hms(as_hms(difftime(ShadowTimeTable[i+4, "Start"], TimeTable[1,"Server_Time"])), digits=0)
+  }
+  
+  ShadowTimeTable[i+4,"Countdown"]<-countdowntime
+  
+    ##Active Logic.##
+    if(difftime(ShadowTimeTable[i+4, "Stop"], TimeTable[1,"Server_Time"])<0){
+      ShadowTimeTable[i+4,"Active?"]<-NA
+    }else if(difftime(ShadowTimeTable[i+4, "Start"], TimeTable[1,"Server_Time"])>=0){
+      ShadowTimeTable[i+4,"Active?"]<-"No"
+    }else if(difftime(ShadowTimeTable[i+4, "Start"], TimeTable[1,"Server_Time"])<=0&&difftime(ShadowTimeTable[i+4, "Stop"], TimeTable[1,"Server_Time"])>=0){
+      ShadowTimeTable[i+4,"Active?"]<-"Yes"
+    }else{
+      ShadowTimeTable[i+4,"Active?"]<-NA
+    }
+  
+  countdowntime<-round_hms(as_hms(difftime(ShadowTimeTable[i+5, "Start"], TimeTable[1,"Server_Time"])), digits=0)
+  if(grepl("-",countdowntime)){
+    countdowntime<-as_hms("00:00:00")
+  }else{
+    countdowntime<-round_hms(as_hms(difftime(ShadowTimeTable[i+5, "Start"], TimeTable[1,"Server_Time"])), digits=0)
+  }
+  
+  ShadowTimeTable[i+5,"Countdown"]<-countdowntime
+  
+    ##Active Logic.##
+    if(difftime(ShadowTimeTable[i+5, "Stop"], TimeTable[1,"Server_Time"])<0){
+      ShadowTimeTable[i+5,"Active?"]<-NA
+    }else if(difftime(ShadowTimeTable[i+5, "Start"], TimeTable[1,"Server_Time"])>=0){
+      ShadowTimeTable[i+5,"Active?"]<-"No"
+    }else if(difftime(ShadowTimeTable[i+5, "Start"], TimeTable[1,"Server_Time"])<=0&&difftime(ShadowTimeTable[i+5, "Stop"], TimeTable[1,"Server_Time"])>=0){
+      ShadowTimeTable[i+5,"Active?"]<-"Yes"
+    }else{
+      ShadowTimeTable[i+5,"Active?"]<-NA
+    }
+  
+  countdowntime<-round_hms(as_hms(difftime(ShadowTimeTable[i+6, "Start"], TimeTable[1,"Server_Time"])), digits=0)
+  if(grepl("-",countdowntime)){
+    countdowntime<-as_hms("00:00:00")
+  }else{
+    countdowntime<-round_hms(as_hms(difftime(ShadowTimeTable[i+6, "Start"], TimeTable[1,"Server_Time"])), digits=0)
+  }
+  
+  ShadowTimeTable[i+6,"Countdown"]<-countdowntime
+    
+    ##Active Logic.##
+    if(difftime(ShadowTimeTable[i+6, "Stop"], TimeTable[1,"Server_Time"])<0){
+      ShadowTimeTable[i+6,"Active?"]<-NA
+    }else if(difftime(ShadowTimeTable[i+6, "Start"], TimeTable[1,"Server_Time"])>=0){
+      ShadowTimeTable[i+6,"Active?"]<-"No"
+    }else if(difftime(ShadowTimeTable[i+6, "Start"], TimeTable[1,"Server_Time"])<=0&&difftime(ShadowTimeTable[i+6, "Stop"], TimeTable[1,"Server_Time"])>=0){
+      ShadowTimeTable[i+6,"Active?"]<-"Yes"
+    }else{
+      ShadowTimeTable[i+6,"Active?"]<-NA
+    }
+    
+  
+  ##Shadow Lottery##
+  countdowntime<-round_hms(as_hms(difftime(ShadowTimeTable[i+7, "Start"], TimeTable[1,"Server_Time"])), digits=0)
+  if(grepl("-",countdowntime)){
+    countdowntime<-as_hms("00:00:00")
+  }else{
+    countdowntime<-round_hms(as_hms(difftime(ShadowTimeTable[i+7, "Start"], TimeTable[1,"Server_Time"])), digits=0)
+  }
+  
+  ShadowTimeTable[i+7,"Countdown"]<-countdowntime
+  
+    ##Active Logic.##
+    if(difftime(ShadowTimeTable[i+7, "Stop"], TimeTable[1,"Server_Time"])<0){
+      ShadowTimeTable[i+7,"Active?"]<-NA
+    }else if(difftime(ShadowTimeTable[i+7, "Start"], TimeTable[1,"Server_Time"])>=0){
+      ShadowTimeTable[i+7,"Active?"]<-"No"
+    }else if(difftime(ShadowTimeTable[i+7, "Start"], TimeTable[1,"Server_Time"])<=0&&difftime(ShadowTimeTable[i+7, "Stop"], TimeTable[1,"Server_Time"])>=0){
+      ShadowTimeTable[i+7,"Active?"]<-"Yes"
+    }else{
+      ShadowTimeTable[i+7,"Active?"]<-NA
+    }
+  
+  countdowntime<-round_hms(as_hms(difftime(ShadowTimeTable[i+8, "Start"], TimeTable[1,"Server_Time"])), digits=0)
+  if(grepl("-",countdowntime)){
+    countdowntime<-as_hms("00:00:00")
+  }else{
+    countdowntime<-round_hms(as_hms(difftime(ShadowTimeTable[i+8, "Start"], TimeTable[1,"Server_Time"])), digits=0)
+  }
+  
+  ShadowTimeTable[i+8,"Countdown"]<-countdowntime
+  
+    ##Active Logic.##
+    if(difftime(ShadowTimeTable[i+8, "Stop"], TimeTable[1,"Server_Time"])<0){
+      ShadowTimeTable[i+8,"Active?"]<-NA
+    }else if(difftime(ShadowTimeTable[i+8, "Start"], TimeTable[1,"Server_Time"])>=0){
+      ShadowTimeTable[i+8,"Active?"]<-"No"
+    }else if(difftime(ShadowTimeTable[i+8, "Start"], TimeTable[1,"Server_Time"])<=0&&difftime(ShadowTimeTable[i+8, "Stop"], TimeTable[1,"Server_Time"])>=0){
+      ShadowTimeTable[i+8,"Active?"]<-"Yes"
+    }else{
+      ShadowTimeTable[i+8,"Active?"]<-NA
+    }
+  
+  countdowntime<-round_hms(as_hms(difftime(ShadowTimeTable[i+9, "Start"], TimeTable[1,"Server_Time"])), digits=0)
+  if(grepl("-",countdowntime)){
+    countdowntime<-as_hms("00:00:00")
+  }else{
+    countdowntime<-round_hms(as_hms(difftime(ShadowTimeTable[i+9, "Start"], TimeTable[1,"Server_Time"])), digits=0)
+  }
+  
+  ShadowTimeTable[i+9,"Countdown"]<-countdowntime
+  
+    ##Active Logic.##
+    if(difftime(ShadowTimeTable[i+9, "Stop"], TimeTable[1,"Server_Time"])<0){
+      ShadowTimeTable[i+9,"Active?"]<-NA
+    }else if(difftime(ShadowTimeTable[i+9, "Start"], TimeTable[1,"Server_Time"])>=0){
+      ShadowTimeTable[i+9,"Active?"]<-"No"
+    }else if(difftime(ShadowTimeTable[i+9, "Start"], TimeTable[1,"Server_Time"])<=0&&difftime(ShadowTimeTable[i+9, "Stop"], TimeTable[1,"Server_Time"])>=0){
+      ShadowTimeTable[i+9,"Active?"]<-"Yes"
+    }else{
+      ShadowTimeTable[i+9,"Active?"]<-NA
+    }
+  
+  ##Shadow War##
+  countdowntime<-round_hms(as_hms(difftime(ShadowTimeTable[i+10, "Start"], TimeTable[1,"Server_Time"])), digits=0)
+  if(grepl("-",countdowntime)){
+    countdowntime<-as_hms("00:00:00")
+  }else{
+    countdowntime<-round_hms(as_hms(difftime(ShadowTimeTable[i+10, "Start"], TimeTable[1,"Server_Time"])), digits=0)
+  }
+  
+  ShadowTimeTable[i+10,"Countdown"]<-countdowntime
+  
+    ##Active Logic.##
+    if(difftime(ShadowTimeTable[i+10, "Stop"], TimeTable[1,"Server_Time"])<0){
+      ShadowTimeTable[i+10,"Active?"]<-NA
+    }else if(difftime(ShadowTimeTable[i+10, "Start"], TimeTable[1,"Server_Time"])>=0){
+      ShadowTimeTable[i+10,"Active?"]<-"No"
+    }else if(difftime(ShadowTimeTable[i+10, "Start"], TimeTable[1,"Server_Time"])<=0&&difftime(ShadowTimeTable[i+10, "Stop"], TimeTable[1,"Server_Time"])>=0){
+      ShadowTimeTable[i+10,"Active?"]<-"Yes"
+    }else{
+      ShadowTimeTable[i+10,"Active?"]<-NA
+    }
 
 }
 
