@@ -281,6 +281,23 @@ for(i in 1:1){
   ShadowTimeTable[i+10, "Start"]<-as.POSIXct(paste0(date(SWDay)," ", "19:00:00"), tz='UTC')
   ShadowTimeTable[i+10, "Stop"]<-as.POSIXct(paste0(date(SWDay)," ", "21:00:00"), tz='UTC')
   
+  #Rite of Exile##
+  
+  REDate<-weekdays(TimeTable[i, "Server_Time"])
+  REDay<-TimeTable[i,"Server_Time"]
+  
+  while(REDate!="Sunday"){
+    REDay<-REDay+days(1)
+    REDate<-weekdays(REDay)
+  }
+  
+
+  ShadowTimeTable[i+11, "Start"]<-as.POSIXct(paste0(date(REDay)," ", "20:00:00"), tz='UTC')
+  ShadowTimeTable[i+11, "Stop"]<-as.POSIXct(paste0(date(REDay)," ", "20:30:00"), tz='UTC')
+  
+  
+  
+  
   
   
   ##Countdown Timers##
@@ -512,6 +529,26 @@ for(i in 1:1){
       ShadowTimeTable[i+10,"Active?"]<-"Yes"
     }else{
       ShadowTimeTable[i+10,"Active?"]<-NA
+    }
+  
+  ##Rite of Exile##
+  countdowntime<-round_hms(as_hms(difftime(ShadowTimeTable[i+11, "Start"], TimeTable[1,"Server_Time"])), digits=0)
+  if(grepl("-",countdowntime)){
+    countdowntime<-as_hms("00:00:00")
+  }else{
+    countdowntime<-round_hms(as_hms(difftime(ShadowTimeTable[i+11, "Start"], TimeTable[1,"Server_Time"])), digits=0)
+  }
+  
+  ShadowTimeTable[i+11,"Countdown"]<-countdowntime
+    ##Active Logic.##
+    if(difftime(ShadowTimeTable[i+11, "Stop"], TimeTable[1,"Server_Time"])<0){
+      ShadowTimeTable[i+11,"Active?"]<-NA
+    }else if(difftime(ShadowTimeTable[i+11, "Start"], TimeTable[1,"Server_Time"])>=0){
+      ShadowTimeTable[i+11,"Active?"]<-"No"
+    }else if(difftime(ShadowTimeTable[i+11, "Start"], TimeTable[1,"Server_Time"])<=0&&difftime(ShadowTimeTable[i+11, "Stop"], TimeTable[1,"Server_Time"])>=0){
+      ShadowTimeTable[i+11,"Active?"]<-"Yes"
+    }else{
+      ShadowTimeTable[i+11,"Active?"]<-NA
     }
 
 }
