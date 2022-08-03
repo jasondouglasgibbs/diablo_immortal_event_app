@@ -278,7 +278,7 @@ for(i in 1:1){
     SWDate<-weekdays(SWDay)
   }
   
-  ShadowTimeTable[i+10, "Start"]<-as.POSIXct(paste0(date(SWDay)," ", "19:00:00"), tz='UTC')
+  ShadowTimeTable[i+10, "Start"]<-as.POSIXct(paste0(date(SWDay)," ", "18:00:00"), tz='UTC')
   ShadowTimeTable[i+10, "Stop"]<-as.POSIXct(paste0(date(SWDay)," ", "21:00:00"), tz='UTC')
   
   #Rite of Exile##
