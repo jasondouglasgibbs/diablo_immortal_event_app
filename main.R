@@ -259,7 +259,7 @@ for(i in 1:1){
   ShadowTimeTable[i+5, "Start"]<-as.POSIXct(paste0(date(TimeTable[1, "Server_Time"])," ", "18:00:00"), tz='UTC')
   ShadowTimeTable[i+5, "Stop"]<-as.POSIXct(paste0(date(TimeTable[1, "Server_Time"])," ", "20:00:00"), tz='UTC')
   ShadowTimeTable[i+6, "Start"]<-as.POSIXct(paste0(date(TimeTable[1, "Server_Time"])," ", "22:00:00"), tz='UTC')
-  ShadowTimeTable[i+6, "Stop"]<-as.POSIXct(paste0(date(TimeTable[1, "Server_Time"])," ", "11:59:59"), tz='UTC')
+  ShadowTimeTable[i+6, "Stop"]<-as.POSIXct(paste0(date(TimeTable[1, "Server_Time"])," ", "23:59:59"), tz='UTC')
   
   ##Shadow Lottery##
   ShadowTimeTable[i+7, "Start"]<-as.POSIXct(paste0(date(TimeTable[1, "Server_Time"])," ", "12:00:00"), tz='UTC')
