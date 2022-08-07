@@ -19,6 +19,7 @@ TimeTable$Demon_Gates_12PM<-as.POSIXct(TimeTable$Demon_Gates_12PM, tz="UTC")
 TimeTable$Demon_Gates_830PM<-as.POSIXct(TimeTable$Demon_Gates_830PM, tz="UTC")
 TimeTable$Demon_Gates_10PM<-as.POSIXct(TimeTable$Demon_Gates_10PM, tz="UTC")
 TimeTable$Ancient_Arena_930PM<-as.POSIXct(TimeTable$Ancient_Arena_930PM, tz="UTC")
+TimeTable$Wrathborne_Invasion_12PM<-as.POSIXct(TimeTable$Wrathborne_Invasion_12PM, tz="UTC")
 TimeTable$System_Time<-now()
 TimeTable$UTC_Time<-now("UTC")
 TimeTable<-as.data.frame(TimeTable)
@@ -98,6 +99,12 @@ for(i in 1:nrow(TimeTable)){
   
   TimeTable[i, "Ancient_Arena_930PM"]<-force_tz(AADay,'UTC')
   TimeTable[i, "Ancient_Arena_930PM"]<-as.POSIXct(paste0(date(TimeTable[i, "Ancient_Arena_930PM"])," ", "21:30:00"), tz='UTC')
+  
+  ##Wrathborne Invasion#
+  WIDay<-TimeTable[i,"Server_Time"]
+  
+  TimeTable[i, "Wrathborne_Invasion_12PM"]<-force_tz(WIDay,'UTC')
+  TimeTable[i, "Wrathborne_Invasion_12PM"]<-as.POSIXct(paste0(date(TimeTable[i, "Wrathborne_Invasion_12PM"])," ", "12:00:00"), tz='UTC')
   
 }
 
@@ -216,6 +223,18 @@ if(grepl("-",countdowntime)){
 TimerDisplayTable[10,2]<-countdowntime
 
 
+##Wrathborne Invasion.##
+countdowntime<-round_hms(as_hms(difftime(TimeTable[1, "Wrathborne_Invasion_12PM"], TimeTable[1,"Server_Time"])), digits=0)
+if(grepl("-",countdowntime)){
+  countdowntime<-NA
+}else{
+  countdowntime<-round_hms(as_hms(difftime(TimeTable[1, "Wrathborne_Invasion_12PM"], TimeTable[1,"Server_Time"])), digits=0)
+}
+
+TimerDisplayTable[11,2]<-countdowntime
+
+
+
 #Ordering and preping for display.##
 TimerDisplayTable<-as.data.frame(filter(TimerDisplayTable, !is.na(TimerDisplayTable$Countdown)))
 TimerDisplayTable<-TimerDisplayTable[order(TimerDisplayTable$Countdown, decreasing=FALSE),]
@@ -245,6 +264,8 @@ for(i in 1:1){
   SADay<-TimeTable[i,"Server_Time"]
   if(SADate=="Sunday"){
     ShadowTimeTable[i+2, "Active?"]<-NA
+    ShadowTimeTable[i+2, "Start"]<-as.POSIXct(paste0(date(TimeTable[1, "Server_Time"])," ", "18:00:00"), tz='UTC')
+    ShadowTimeTable[i+2, "Stop"]<-as.POSIXct(paste0(date(TimeTable[1, "Server_Time"])," ", "20:00:00"), tz='UTC')
   }else{
     ShadowTimeTable[i+2, "Start"]<-as.POSIXct(paste0(date(TimeTable[1, "Server_Time"])," ", "18:00:00"), tz='UTC')
     ShadowTimeTable[i+2, "Stop"]<-as.POSIXct(paste0(date(TimeTable[1, "Server_Time"])," ", "20:00:00"), tz='UTC')
