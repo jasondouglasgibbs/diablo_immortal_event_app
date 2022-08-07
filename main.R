@@ -578,5 +578,233 @@ for(i in 1:1){
 
 }
 
+##Immortal Event Timers##
+ImmortalTimeTable<-read_xlsx("Immortal_Lookup_Table.xlsx")
+ImmortalTimeTable$Start<-as.POSIXct(ImmortalTimeTable$Start, tz="UTC")
+ImmortalTimeTable$Stop<-as.POSIXct(ImmortalTimeTable$Stop, tz="UTC")
+ImmortalTimeTable$Countdown<-as_hms(ImmortalTimeTable$Countdown)
+ImmortalTimeTable$`Active?`<-as.character(ImmortalTimeTable$`Active?`)
+ImmortalTimeTable<-as.data.frame(ImmortalTimeTable)
+
+for(i in 1:1){
+  ##Defend the Vault##
+  ImmortalTimeTable[i, "Start"]<-as.POSIXct(paste0(date(TimeTable[1, "Server_Time"])," ", "12:00:00"), tz='UTC')
+  ImmortalTimeTable[i, "Stop"]<-as.POSIXct(paste0(date(TimeTable[1, "Server_Time"])," ", "14:00:00"), tz='UTC')
+  ImmortalTimeTable[i+1, "Start"]<-as.POSIXct(paste0(date(TimeTable[1, "Server_Time"])," ", "19:00:00"), tz='UTC')
+  ImmortalTimeTable[i+1, "Stop"]<-as.POSIXct(paste0(date(TimeTable[1, "Server_Time"])," ", "21:00:00"), tz='UTC')
+  
+  ##Battlegrounds##
+  ImmortalTimeTable[i+2, "Start"]<-as.POSIXct(paste0(date(TimeTable[1, "Server_Time"])," ", "08:00:00"), tz='UTC')
+  ImmortalTimeTable[i+2, "Stop"]<-as.POSIXct(paste0(date(TimeTable[1, "Server_Time"])," ", "10:00:00"), tz='UTC')
+  ImmortalTimeTable[i+3, "Start"]<-as.POSIXct(paste0(date(TimeTable[1, "Server_Time"])," ", "12:00:00"), tz='UTC')
+  ImmortalTimeTable[i+3, "Stop"]<-as.POSIXct(paste0(date(TimeTable[1, "Server_Time"])," ", "14:00:00"), tz='UTC')
+  ImmortalTimeTable[i+4, "Start"]<-as.POSIXct(paste0(date(TimeTable[1, "Server_Time"])," ", "18:00:00"), tz='UTC')
+  ImmortalTimeTable[i+4, "Stop"]<-as.POSIXct(paste0(date(TimeTable[1, "Server_Time"])," ", "20:00:00"), tz='UTC')
+  ImmortalTimeTable[i+5, "Start"]<-as.POSIXct(paste0(date(TimeTable[1, "Server_Time"])," ", "22:00:00"), tz='UTC')
+  ImmortalTimeTable[i+5, "Stop"]<-as.POSIXct(paste0(date(TimeTable[1, "Server_Time"])," ", "23:59:59"), tz='UTC')
+  
+  
+  ##Corvus Expedition##
+  CEDate<-weekdays(TimeTable[i, "Server_Time"])
+  CEDay<-TimeTable[i,"Server_Time"]
+  
+  while(CEDate!="Monday"&&CEDate!="Wednesday"&&CEDate!="Friday"){
+    CEDay<-CEDay+days(1)
+    CEDate<-weekdays(CEDay)
+  }
+  
+  ImmortalTimeTable[i+6, "Start"]<-as.POSIXct(paste0(date(CEDay)," ", "20:00:00"), tz='UTC')
+  ImmortalTimeTable[i+6, "Stop"]<-as.POSIXct(paste0(date(CEDay)," ", "20:30:00"), tz='UTC')
+
+  #Rite of Exile##
+  
+  REDate<-weekdays(TimeTable[i, "Server_Time"])
+  REDay<-TimeTable[i,"Server_Time"]
+  
+  while(REDate!="Sunday"){
+    REDay<-REDay+days(1)
+    REDate<-weekdays(REDay)
+  }
+  
+  
+  ImmortalTimeTable[i+7, "Start"]<-as.POSIXct(paste0(date(REDay)," ", "20:00:00"), tz='UTC')
+  ImmortalTimeTable[i+7, "Stop"]<-as.POSIXct(paste0(date(REDay)," ", "20:30:00"), tz='UTC')
+  
+
+  
+  ##Countdown Timers##
+  
+  ##Defend the Vault##
+  countdowntime<-round_hms(as_hms(difftime(ImmortalTimeTable[i, "Start"], TimeTable[1,"Server_Time"])), digits=0)
+  if(grepl("-",countdowntime)){
+    countdowntime<-as_hms("00:00:00")
+  }else{
+    countdowntime<-round_hms(as_hms(difftime(ImmortalTimeTable[i, "Start"], TimeTable[1,"Server_Time"])), digits=0)
+  }
+  
+  ImmortalTimeTable[i,"Countdown"]<-countdowntime
+  ##Active Logic.##
+  if(difftime(ImmortalTimeTable[i, "Stop"], TimeTable[1,"Server_Time"])<0){
+    ImmortalTimeTable[i,"Active?"]<-NA
+  }else if(difftime(ImmortalTimeTable[i, "Start"], TimeTable[1,"Server_Time"])>=0){
+    ImmortalTimeTable[i,"Active?"]<-"No"
+  }else if(difftime(ImmortalTimeTable[i, "Start"], TimeTable[1,"Server_Time"])<=0&&difftime(ImmortalTimeTable[i, "Stop"], TimeTable[1,"Server_Time"])>=0){
+    ImmortalTimeTable[i,"Active?"]<-"Yes"
+  }else{
+    ImmortalTimeTable[i,"Active?"]<-NA
+  }
+  
+  
+  countdowntime<-round_hms(as_hms(difftime(ImmortalTimeTable[i+1, "Start"], TimeTable[1,"Server_Time"])), digits=0)
+  if(grepl("-",countdowntime)){
+    countdowntime<-as_hms("00:00:00")
+  }else{
+    countdowntime<-round_hms(as_hms(difftime(ImmortalTimeTable[i+1, "Start"], TimeTable[1,"Server_Time"])), digits=0)
+  }
+  
+  ImmortalTimeTable[i+1,"Countdown"]<-countdowntime
+  ##Active Logic.##
+  if(difftime(ImmortalTimeTable[i+1, "Stop"], TimeTable[1,"Server_Time"])<0){
+    ImmortalTimeTable[i+1,"Active?"]<-NA
+  }else if(difftime(ImmortalTimeTable[i+1, "Start"], TimeTable[1,"Server_Time"])>=0){
+    ImmortalTimeTable[i+1,"Active?"]<-"No"
+  }else if(difftime(ImmortalTimeTable[i+1, "Start"], TimeTable[1,"Server_Time"])<=0&&difftime(ImmortalTimeTable[i+1, "Stop"], TimeTable[1,"Server_Time"])>=0){
+    ImmortalTimeTable[i+1,"Active?"]<-"Yes"
+  }else{
+    ImmortalTimeTable[i+1,"Active?"]<-NA
+  }
+
+  
+  
+  ##Battlegrounds##
+  countdowntime<-round_hms(as_hms(difftime(ImmortalTimeTable[i+2, "Start"], TimeTable[1,"Server_Time"])), digits=0)
+  if(grepl("-",countdowntime)){
+    countdowntime<-as_hms("00:00:00")
+  }else{
+    countdowntime<-round_hms(as_hms(difftime(ImmortalTimeTable[i+2, "Start"], TimeTable[1,"Server_Time"])), digits=0)
+  }
+  
+  ImmortalTimeTable[i+2,"Countdown"]<-countdowntime
+  
+  ##Active Logic.##
+  if(difftime(ImmortalTimeTable[i+2, "Stop"], TimeTable[1,"Server_Time"])<0){
+    ImmortalTimeTable[i+2,"Active?"]<-NA
+  }else if(difftime(ImmortalTimeTable[i+2, "Start"], TimeTable[1,"Server_Time"])>=0){
+    ImmortalTimeTable[i+2,"Active?"]<-"No"
+  }else if(difftime(ImmortalTimeTable[i+2, "Start"], TimeTable[1,"Server_Time"])<=0&&difftime(ImmortalTimeTable[i+2, "Stop"], TimeTable[1,"Server_Time"])>=0){
+    ImmortalTimeTable[i+2,"Active?"]<-"Yes"
+  }else{
+    ImmortalTimeTable[i+2,"Active?"]<-NA
+  }
+  
+  
+  countdowntime<-round_hms(as_hms(difftime(ImmortalTimeTable[i+3, "Start"], TimeTable[1,"Server_Time"])), digits=0)
+  if(grepl("-",countdowntime)){
+    countdowntime<-as_hms("00:00:00")
+  }else{
+    countdowntime<-round_hms(as_hms(difftime(ImmortalTimeTable[i+3, "Start"], TimeTable[1,"Server_Time"])), digits=0)
+  }
+  
+  ImmortalTimeTable[i+3,"Countdown"]<-countdowntime
+  
+  ##Active Logic.##
+  if(difftime(ImmortalTimeTable[i+3, "Stop"], TimeTable[1,"Server_Time"])<0){
+    ImmortalTimeTable[i+3,"Active?"]<-NA
+  }else if(difftime(ImmortalTimeTable[i+4, "Start"], TimeTable[1,"Server_Time"])>=0){
+    ImmortalTimeTable[i+3,"Active?"]<-"No"
+  }else if(difftime(ImmortalTimeTable[i+3, "Start"], TimeTable[1,"Server_Time"])<=0&&difftime(ImmortalTimeTable[i+3, "Stop"], TimeTable[1,"Server_Time"])>=0){
+    ImmortalTimeTable[i+3,"Active?"]<-"Yes"
+  }else{
+    ImmortalTimeTable[i+3,"Active?"]<-NA
+  }
+  
+  countdowntime<-round_hms(as_hms(difftime(ImmortalTimeTable[i+4, "Start"], TimeTable[1,"Server_Time"])), digits=0)
+  if(grepl("-",countdowntime)){
+    countdowntime<-as_hms("00:00:00")
+  }else{
+    countdowntime<-round_hms(as_hms(difftime(ImmortalTimeTable[i+4, "Start"], TimeTable[1,"Server_Time"])), digits=0)
+  }
+  
+  ImmortalTimeTable[i+4,"Countdown"]<-countdowntime
+  
+  ##Active Logic.##
+  if(difftime(ImmortalTimeTable[i+4, "Stop"], TimeTable[1,"Server_Time"])<0){
+    ImmortalTimeTable[i+4,"Active?"]<-NA
+  }else if(difftime(ImmortalTimeTable[i+4, "Start"], TimeTable[1,"Server_Time"])>=0){
+    ImmortalTimeTable[i+4,"Active?"]<-"No"
+  }else if(difftime(ImmortalTimeTable[i+4, "Start"], TimeTable[1,"Server_Time"])<=0&&difftime(ImmortalTimeTable[i+4, "Stop"], TimeTable[1,"Server_Time"])>=0){
+    ImmortalTimeTable[i+4,"Active?"]<-"Yes"
+  }else{
+    ImmortalTimeTable[i+4,"Active?"]<-NA
+  }
+  
+  countdowntime<-round_hms(as_hms(difftime(ImmortalTimeTable[i+5, "Start"], TimeTable[1,"Server_Time"])), digits=0)
+  if(grepl("-",countdowntime)){
+    countdowntime<-as_hms("00:00:00")
+  }else{
+    countdowntime<-round_hms(as_hms(difftime(ImmortalTimeTable[i+5, "Start"], TimeTable[1,"Server_Time"])), digits=0)
+  }
+  
+  ImmortalTimeTable[i+5,"Countdown"]<-countdowntime
+  
+  ##Active Logic.##
+  if(difftime(ImmortalTimeTable[i+5, "Stop"], TimeTable[1,"Server_Time"])<0){
+    ImmortalTimeTable[i+5,"Active?"]<-NA
+  }else if(difftime(ImmortalTimeTable[i+5, "Start"], TimeTable[1,"Server_Time"])>=0){
+    ImmortalTimeTable[i+5,"Active?"]<-"No"
+  }else if(difftime(ImmortalTimeTable[i+5, "Start"], TimeTable[1,"Server_Time"])<=0&&difftime(ImmortalTimeTable[i+5, "Stop"], TimeTable[1,"Server_Time"])>=0){
+    ImmortalTimeTable[i+5,"Active?"]<-"Yes"
+  }else{
+    ImmortalTimeTable[i+5,"Active?"]<-NA
+  }
+  
+  
+  #Corvus Expedition##
+  countdowntime<-round_hms(as_hms(difftime(ImmortalTimeTable[i+6, "Start"], TimeTable[1,"Server_Time"])), digits=0)
+  if(grepl("-",countdowntime)){
+    ImmortalTimeTable<-as_hms("00:00:00")
+  }else{
+    countdowntime<-round_hms(as_hms(difftime(ImmortalTimeTable[i+6, "Start"], TimeTable[1,"Server_Time"])), digits=0)
+  }
+
+  ImmortalTimeTable[i+6,"Countdown"]<-countdowntime
+
+  ##Active Logic.##
+  if(difftime(ImmortalTimeTable[i+6, "Stop"], TimeTable[1,"Server_Time"])<0){
+    ImmortalTimeTable[i+6,"Active?"]<-NA
+  }else if(difftime(ImmortalTimeTable[i+6, "Start"], TimeTable[1,"Server_Time"])>=0){
+    ImmortalTimeTable[i+6,"Active?"]<-"No"
+  }else if(difftime(ImmortalTimeTable[i+6, "Start"], TimeTable[1,"Server_Time"])<=0&&difftime(ImmortalTimeTable[i+6, "Stop"], TimeTable[1,"Server_Time"])>=0){
+    ImmortalTimeTable[i+6,"Active?"]<-"Yes"
+  }else{
+    ImmortalTimeTable[i+6,"Active?"]<-NA
+  }
+
+
+  #Rite of Exile##
+  countdowntime<-round_hms(as_hms(difftime(ImmortalTimeTable[i+7, "Start"], TimeTable[1,"Server_Time"])), digits=0)
+  if(grepl("-",countdowntime)){
+    countdowntime<-as_hms("00:00:00")
+  }else{
+    countdowntime<-round_hms(as_hms(difftime(ImmortalTimeTable[i+7, "Start"], TimeTable[1,"Server_Time"])), digits=0)
+  }
+
+  ImmortalTimeTable[i+7,"Countdown"]<-countdowntime
+  ##Active Logic.##
+  if(difftime(ImmortalTimeTable[i+7, "Stop"], TimeTable[1,"Server_Time"])<0){
+    ImmortalTimeTable[i+7,"Active?"]<-NA
+  }else if(difftime(ImmortalTimeTable[i+7, "Start"], TimeTable[1,"Server_Time"])>=0){
+    ImmortalTimeTable[i+7,"Active?"]<-"No"
+  }else if(difftime(ImmortalTimeTable[i+7, "Start"], TimeTable[1,"Server_Time"])<=0&&difftime(ImmortalTimeTable[i+7, "Stop"], TimeTable[1,"Server_Time"])>=0){
+    ImmortalTimeTable[i+7,"Active?"]<-"Yes"
+  }else{
+    ImmortalTimeTable[i+7,"Active?"]<-NA
+  }
+  
+}
+
+ImmortalTimeTable<-as.data.frame(filter(ImmortalTimeTable, !is.na(ImmortalTimeTable$Active)))
+ImmortalTimeTable<-ImmortalTimeTable[order(ImmortalTimeTable$Countdown, decreasing=FALSE),]
+
 ShadowTimeTable<-as.data.frame(filter(ShadowTimeTable, !is.na(ShadowTimeTable$Active)))
 ShadowTimeTable<-ShadowTimeTable[order(ShadowTimeTable$Countdown, decreasing=FALSE),]
