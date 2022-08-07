@@ -385,7 +385,11 @@ for(i in 1:1){
       }else{
         ShadowTimeTable[i+2,"Active?"]<-NA
       }
-  
+      
+      if(weekdays(TimeTable[1,"Server_Time"])=="Sunday"){
+        ShadowTimeTable[i+2,"Active?"]<-NA
+      }
+      
   
   ##Battlegrounds##
   countdowntime<-round_hms(as_hms(difftime(ShadowTimeTable[i+3, "Start"], TimeTable[1,"Server_Time"])), digits=0)

@@ -425,6 +425,12 @@ server <- function(input, output, session) {
       }else{
         ShadowTimeTable[i+2,"Active?"]<-NA
       }
+    
+    
+      if(weekdays(TimeTable[1,"Server_Time"])=="Sunday"){
+        ShadowTimeTable[i+2,"Active?"]<-NA
+      }
+      
       
       
     ##Battlegrounds##
