@@ -813,7 +813,7 @@ server <- function(input, output, session) {
       #Corvus Expedition##
       countdowntime<-round_hms(as_hms(difftime(ImmortalTimeTable[i+6, "Start"], TimeTable[1,"Server_Time"])), digits=0)
       if(grepl("-",countdowntime)){
-        ImmortalTimeTable<-as_hms("00:00:00")
+        countdowntime<-as_hms("00:00:00")
       }else{
         countdowntime<-round_hms(as_hms(difftime(ImmortalTimeTable[i+6, "Start"], TimeTable[1,"Server_Time"])), digits=0)
       }
