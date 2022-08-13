@@ -808,3 +808,59 @@ ImmortalTimeTable<-ImmortalTimeTable[order(ImmortalTimeTable$Countdown, decreasi
 
 ShadowTimeTable<-as.data.frame(filter(ShadowTimeTable, !is.na(ShadowTimeTable$Active)))
 ShadowTimeTable<-ShadowTimeTable[order(ShadowTimeTable$Countdown, decreasing=FALSE),]
+
+
+##Reset Timers##
+ResetTimeTable<-read_xlsx("ResetTable.xlsx")
+ResetTimeTable$Countdown<-as_hms(ResetTimeTable$Countdown)
+ResetTimeTable$`Reset`<-as.character(ResetTimeTable$`Reset`)
+ResetTimeTable$`Notes`<-as.character(ResetTimeTable$`Notes`)
+ResetTimeTable<-as.data.frame(ResetTimeTable)
+
+
+
+  ##Daily Reset.##
+  DailyDay<-TimeTable[1,"Server_Time"]
+  DailyResetTime<-as.POSIXct(paste0(date(TimeTable[1, "Server_Time"])," ", "03:00:00"), tz='UTC')
+
+
+  while(difftime(DailyResetTime,DailyDay)<0){
+    DailyResetTime<-DailyResetTime+days(1)
+  }
+
+  DailyCountdown<-round_hms(as_hms(difftime(DailyResetTime,DailyDay)), digits=0)
+  ResetTimeTable[1, "Countdown"]<-DailyCountdown
+  
+  
+  ##Hilts Limited Items Reset.##
+  ##12PM##
+  DailyDay<-TimeTable[1,"Server_Time"]
+  DailyResetTime<-as.POSIXct(paste0(date(TimeTable[1, "Server_Time"])," ", "12:00:00"), tz='UTC')
+  DailyCountdown<-round_hms(as_hms(difftime(DailyResetTime,DailyDay)), digits=0)
+  ResetTimeTable[2, "Countdown"]<-DailyCountdown
+
+  ##Hilts Limited Items Reset.##
+  ##8PM##
+  DailyDay<-TimeTable[1,"Server_Time"]
+  DailyResetTime<-as.POSIXct(paste0(date(TimeTable[1, "Server_Time"])," ", "20:00:00"), tz='UTC')
+  DailyCountdown<-round_hms(as_hms(difftime(DailyResetTime,DailyDay)), digits=0)
+  ResetTimeTable[3, "Countdown"]<-DailyCountdown
+  
+  
+  ##Weekly Reset.##
+  
+  WeeklyDate<-weekdays(TimeTable[i, "Server_Time"])
+  WeeklyDay<-TimeTable[i,"Server_Time"]
+  
+  while(WeeklyDate!="Monday"){
+    WeeklyDay<-WeeklyDay+days(1)
+    WeeklyDate<-weekdays(WeeklyDay)
+  }
+  WeeklyDay<-as.POSIXct(paste0(date(WeeklyDay)," ", "03:00:00"), tz='UTC')
+  #WeeklyResetTime<-as.POSIXct(paste0(date(TimeTable[1, "Server_Time"])," ", "20:00:00"), tz='UTC')
+  WeeklyCountdown<-round_hms(as_hms(difftime(WeeklyDay, TimeTable[1, "Server_Time"])), digits=0)
+  ResetTimeTable[4, "Countdown"]<-WeeklyCountdown
+  
+  
+ResetTimeTable<-as.data.frame(filter(ResetTimeTable, ResetTimeTable$Countdown>0))
+ResetTimeTable<-ResetTimeTable[order(ResetTimeTable$Countdown, decreasing=FALSE),]
