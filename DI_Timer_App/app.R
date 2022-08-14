@@ -3,7 +3,6 @@ library(readxl)
 library(lubridate)
 library(hms)
 library(shinydashboard)
-library(fresh)
 library(kableExtra)
 TimeTable<-read_xlsx("DI_Lookup_Table.xlsx")
 ShadowTimeTable<-read_xlsx("Shadow_Lookup_Table.xlsx")
@@ -11,63 +10,132 @@ ImmortalTimeTable<-read_xlsx("Immortal_Lookup_Table.xlsx")
 ResetTimeTable<-read_xlsx("ResetTable.xlsx")
 
 
-mytheme <- create_theme(
-  adminlte_color(
-    light_blue = "#3A3B3C"
-  ),
-  adminlte_sidebar(
-    width = "350px",
-    dark_bg = "#3A3B3C",
-    dark_hover_bg = "#3A3B3C",
-    dark_color = "#3A3B3C"
-  ),
-  adminlte_global(
-    content_bg = "#3A3B3C",
-    box_bg = "#3A3B3C", 
-    info_box_bg = "#3A3B3C"
-  )
-)
-
 
 ##Defines the UI.##
 ui <- dashboardPage(
-                    ##Application title.##
-                    dashboardHeader(titleWidth=350, title = "Diablo Immortal Timers"),
-                    
-                    ##Sidebar with inputs.##
-                    dashboardSidebar(width=350,
-                                     sidebarMenu(
-                                       selectInput("server", "Server:", TimeTable$Server_Name),
-                                       selectInput("faction", "Faction:", c("Shadow", "Immortal")))
-                                     
-                    ),
-                    
-                    ##Body outputs.##
-                    dashboardBody(#tableOutput("DiagnosticTimeTable"),
-                                  #textOutput("TimerSTR"),
-                                  use_theme(mytheme),
-                                  fluidRow(
-                                    box(tableOutput("TimerTable")),
-                                    box(tableOutput("ResetTimeTabler"))
-                                  ),
-                                  tableOutput("ShadowTimerTabler"),
-                                  tags$head(tags$style("#TimerTable{color: white;
+  ##Application title.##
+  dashboardHeader(titleWidth=350, title = "Diablo Immortal Timers"),
+  
+  ##Sidebar with inputs.##
+  dashboardSidebar(width=350,
+                   sidebarMenu(
+                     selectInput("server", "Server:", TimeTable$Server_Name),
+                     selectInput("faction", "Faction:", c("Shadow", "Immortal")))
+                   
+  ),
+  
+  ##Body outputs.##
+  dashboardBody(#tableOutput("DiagnosticTimeTable"),
+    #textOutput("TimerSTR"),
+    #use_theme(mytheme),
+    
+    tags$style(HTML("
+                
+                
+                                .box.box-solid.box-primary>.box-header {
+                                color:#3A3B3C;
+                                background:#3A3B3C
+                                }
+            
+                                .box.box-solid.box-primary{
+                                border-bottom-color:#3A3B3C;
+                                border-left-color:#3A3B3C;
+                                border-right-color:#3A3B3C;
+                                border-top-color:#3A3B3C;
+                                background:#3A3B3C
+                                }
+                
+                                ")),
+    tags$style(HTML("
+                
+                
+                                .box.box-solid.box-warning>.box-header {
+                                color:#3A3B3C;
+                                background:#3A3B3C
+                                }
+            
+                                .box.box-solid.box-warning{
+                                border-bottom-color:#3A3B3C;
+                                border-left-color:#3A3B3C;
+                                border-right-color:#3A3B3C;
+                                border-top-color:#3A3B3C;
+                                background:#3A3B3C
+                                }
+                
+                                ")),
+    fluidRow(
+      box(tableOutput("TimerTable"), status="primary", solidHeader = TRUE, ""),
+      box(tableOutput("ResetTimeTabler"), status="warning", solidHeader = TRUE, "")
+    ),
+    tableOutput("ShadowTimerTabler"),
+    tags$head(tags$style("#TimerTable{color: white;
                                                          font-size: 20px;
                                                          }"
-                                  )
-                                  ),
-                                  tags$head(tags$style("#ResetTimeTabler{color: white;
+    )
+    ),
+    tags$head(tags$style("#ResetTimeTabler{color: white;
                                                          font-size: 20px;
                                                          }"
-                                  )
-                                  ),
-                                  tags$head(tags$style("#ShadowTimerTabler{color: white;
+    )
+    ),
+    tags$head(tags$style("#ShadowTimerTabler{color: white;
                                                          font-size: 20px;
                                                          }"
-                                  )
-                                  )
-                                  
-                    )
+    )
+    ),
+    
+    tags$style(HTML('
+                                /* logo */
+                                .skin-blue .main-header .logo {
+                                background-color: #3A3B3C;
+                                }
+                                
+                                /* logo when hovered */
+                                .skin-blue .main-header .logo:hover {
+                                background-color: #3A3B3C;
+                                }
+                                
+                                /* navbar (rest of the header) */
+                                .skin-blue .main-header .navbar {
+                                background-color: #3A3B3C;
+                                }
+                                
+                                /* main sidebar */
+                                .skin-blue .main-sidebar {
+                                background-color: #3A3B3C;
+                                }
+                                
+                                /* active selected tab in the sidebarmenu */
+                                .skin-blue .main-sidebar .sidebar .sidebar-menu .active a{
+                                background-color: #3A3B3C;
+                                }
+                                
+                                /* other links in the sidebarmenu */
+                                .skin-blue .main-sidebar .sidebar .sidebar-menu a{
+                                background-color: #3A3B3C;
+                                color: #3A3B3C;
+                                }
+                                
+                                /* other links in the sidebarmenu when hovered */
+                                .skin-blue .main-sidebar .sidebar .sidebar-menu a:hover{
+                                background-color: #3A3B3C;
+                                }
+                                /* toggle button when hovered  */
+                                .skin-blue .main-header .navbar .sidebar-toggle:hover{
+                                background-color: #3A3B3C;
+                                }
+
+                                /* body */
+                                .content-wrapper, .right-side {
+                                background-color: #3A3B3C;
+                                }
+                                
+                                                                
+                                ')
+    )
+    
+    
+  )
 )
 
 ##Server Logic##
@@ -88,7 +156,7 @@ server <- function(input, output, session) {
     TimeTable$Demon_Gates_10PM<-as.POSIXct(TimeTable$Demon_Gates_10PM, tz="UTC")
     TimeTable$Ancient_Arena_930PM<-as.POSIXct(TimeTable$Ancient_Arena_930PM, tz="UTC")
     TimeTable$Wrathborne_Invasion_12PM<-as.POSIXct(TimeTable$Wrathborne_Invasion_12PM, tz="UTC")
-
+    
     ##Gets the system time and UTC time.##
     TimeTable$System_Time<-now()
     TimeTable$UTC_Time<-now("UTC")
@@ -200,7 +268,7 @@ server <- function(input, output, session) {
     ##invalidateLater causes the server to recalculate the time every second, creating the "countdown" effect".##
     invalidateLater(5000)
     TimerDisplayTable$Countdown<-as_hms(TimerDisplayTable$Countdown)
-
+    
     
     ##Ancient Nightmare.##
     ##Finds the time difference between the event start time and the server time. Converts to hms format and rounds.##
@@ -318,7 +386,7 @@ server <- function(input, output, session) {
     
     TimerDisplayTable[11,2]<-countdowntime
     
-
+    
     #Ordering and preping for display.##
     ##Filters out any countdown values that are NA, orders by countdown timer, and resets the rownames##
     ##in order to prevent them from being displayed in the kable table.##
@@ -403,16 +471,16 @@ server <- function(input, output, session) {
       ShadowTimeTable[i+11, "Start"]<-as.POSIXct(paste0(date(REDay)," ", "20:00:00"), tz='UTC')
       ShadowTimeTable[i+11, "Stop"]<-as.POSIXct(paste0(date(REDay)," ", "20:30:00"), tz='UTC')
       
-    ##Countdown Timers##
-    
-    ##Raid the Vault##
-    countdowntime<-round_hms(as_hms(difftime(ShadowTimeTable[i, "Start"], TimeTable[1,"Server_Time"])), digits=0)
-    if(grepl("-",countdowntime)){
-      countdowntime<-as_hms("00:00:00")
-    }else{
+      ##Countdown Timers##
+      
+      ##Raid the Vault##
       countdowntime<-round_hms(as_hms(difftime(ShadowTimeTable[i, "Start"], TimeTable[1,"Server_Time"])), digits=0)
-    }
-    
+      if(grepl("-",countdowntime)){
+        countdowntime<-as_hms("00:00:00")
+      }else{
+        countdowntime<-round_hms(as_hms(difftime(ShadowTimeTable[i, "Start"], TimeTable[1,"Server_Time"])), digits=0)
+      }
+      
       ShadowTimeTable[i,"Countdown"]<-countdowntime
       ##Active Logic.##
       if(difftime(ShadowTimeTable[i, "Stop"], TimeTable[1,"Server_Time"])<0){
@@ -447,15 +515,15 @@ server <- function(input, output, session) {
       
       
       
-    ##Shadow Assembly##
-    countdowntime<-round_hms(as_hms(difftime(ShadowTimeTable[i+2, "Start"], TimeTable[1,"Server_Time"])), digits=0)
-    if(grepl("-",countdowntime)){
-      countdowntime<-as_hms("00:00:00")
-    }else{
+      ##Shadow Assembly##
       countdowntime<-round_hms(as_hms(difftime(ShadowTimeTable[i+2, "Start"], TimeTable[1,"Server_Time"])), digits=0)
-    }
-    
-    ShadowTimeTable[i+2,"Countdown"]<-countdowntime
+      if(grepl("-",countdowntime)){
+        countdowntime<-as_hms("00:00:00")
+      }else{
+        countdowntime<-round_hms(as_hms(difftime(ShadowTimeTable[i+2, "Start"], TimeTable[1,"Server_Time"])), digits=0)
+      }
+      
+      ShadowTimeTable[i+2,"Countdown"]<-countdowntime
       
       ##Active Logic.##
       if(difftime(ShadowTimeTable[i+2, "Stop"], TimeTable[1,"Server_Time"])<0){
@@ -467,23 +535,23 @@ server <- function(input, output, session) {
       }else{
         ShadowTimeTable[i+2,"Active?"]<-NA
       }
-    
-    
+      
+      
       if(weekdays(TimeTable[1,"Server_Time"])=="Sunday"){
         ShadowTimeTable[i+2,"Active?"]<-NA
       }
       
       
       
-    ##Battlegrounds##
-    countdowntime<-round_hms(as_hms(difftime(ShadowTimeTable[i+3, "Start"], TimeTable[1,"Server_Time"])), digits=0)
-    if(grepl("-",countdowntime)){
-      countdowntime<-as_hms("00:00:00")
-    }else{
+      ##Battlegrounds##
       countdowntime<-round_hms(as_hms(difftime(ShadowTimeTable[i+3, "Start"], TimeTable[1,"Server_Time"])), digits=0)
-    }
-    
-    ShadowTimeTable[i+3,"Countdown"]<-countdowntime
+      if(grepl("-",countdowntime)){
+        countdowntime<-as_hms("00:00:00")
+      }else{
+        countdowntime<-round_hms(as_hms(difftime(ShadowTimeTable[i+3, "Start"], TimeTable[1,"Server_Time"])), digits=0)
+      }
+      
+      ShadowTimeTable[i+3,"Countdown"]<-countdowntime
       
       ##Active Logic.##
       if(difftime(ShadowTimeTable[i+3, "Stop"], TimeTable[1,"Server_Time"])<0){
@@ -558,15 +626,15 @@ server <- function(input, output, session) {
       }
       
       
-    ##Shadow Lottery##
-    countdowntime<-round_hms(as_hms(difftime(ShadowTimeTable[i+7, "Start"], TimeTable[1,"Server_Time"])), digits=0)
-    if(grepl("-",countdowntime)){
-      countdowntime<-as_hms("00:00:00")
-    }else{
+      ##Shadow Lottery##
       countdowntime<-round_hms(as_hms(difftime(ShadowTimeTable[i+7, "Start"], TimeTable[1,"Server_Time"])), digits=0)
-    }
-    
-    ShadowTimeTable[i+7,"Countdown"]<-countdowntime
+      if(grepl("-",countdowntime)){
+        countdowntime<-as_hms("00:00:00")
+      }else{
+        countdowntime<-round_hms(as_hms(difftime(ShadowTimeTable[i+7, "Start"], TimeTable[1,"Server_Time"])), digits=0)
+      }
+      
+      ShadowTimeTable[i+7,"Countdown"]<-countdowntime
       
       ##Active Logic.##
       if(difftime(ShadowTimeTable[i+7, "Stop"], TimeTable[1,"Server_Time"])<0){
@@ -619,15 +687,15 @@ server <- function(input, output, session) {
         ShadowTimeTable[i+9,"Active?"]<-NA
       }
       
-    ##Shadow War##
-    countdowntime<-round_hms(as_hms(difftime(ShadowTimeTable[i+10, "Start"], TimeTable[1,"Server_Time"])), digits=0)
-    if(grepl("-",countdowntime)){
-      countdowntime<-as_hms("00:00:00")
-    }else{
+      ##Shadow War##
       countdowntime<-round_hms(as_hms(difftime(ShadowTimeTable[i+10, "Start"], TimeTable[1,"Server_Time"])), digits=0)
-    }
-    
-    ShadowTimeTable[i+10,"Countdown"]<-countdowntime
+      if(grepl("-",countdowntime)){
+        countdowntime<-as_hms("00:00:00")
+      }else{
+        countdowntime<-round_hms(as_hms(difftime(ShadowTimeTable[i+10, "Start"], TimeTable[1,"Server_Time"])), digits=0)
+      }
+      
+      ShadowTimeTable[i+10,"Countdown"]<-countdowntime
       
       ##Active Logic.##
       if(difftime(ShadowTimeTable[i+10, "Stop"], TimeTable[1,"Server_Time"])<0){
@@ -640,15 +708,15 @@ server <- function(input, output, session) {
         ShadowTimeTable[i+10,"Active?"]<-NA
       }
       
-    ##Rite of Exile##
-    countdowntime<-round_hms(as_hms(difftime(ShadowTimeTable[i+11, "Start"], TimeTable[1,"Server_Time"])), digits=0)
-    if(grepl("-",countdowntime)){
-      countdowntime<-as_hms("00:00:00")
-    }else{
+      ##Rite of Exile##
       countdowntime<-round_hms(as_hms(difftime(ShadowTimeTable[i+11, "Start"], TimeTable[1,"Server_Time"])), digits=0)
-    }
-    
-    ShadowTimeTable[i+11,"Countdown"]<-countdowntime
+      if(grepl("-",countdowntime)){
+        countdowntime<-as_hms("00:00:00")
+      }else{
+        countdowntime<-round_hms(as_hms(difftime(ShadowTimeTable[i+11, "Start"], TimeTable[1,"Server_Time"])), digits=0)
+      }
+      
+      ShadowTimeTable[i+11,"Countdown"]<-countdowntime
       ##Active Logic.##
       if(difftime(ShadowTimeTable[i+11, "Stop"], TimeTable[1,"Server_Time"])<0){
         ShadowTimeTable[i+11,"Active?"]<-NA
@@ -659,14 +727,14 @@ server <- function(input, output, session) {
       }else{
         ShadowTimeTable[i+11,"Active?"]<-NA
       }
-        
+      
       
     }
     
     ShadowTimeTable<-as.data.frame(filter(ShadowTimeTable, !is.na(ShadowTimeTable$Active)))
     ShadowTimeTable<-ShadowTimeTable[order(ShadowTimeTable$Countdown, decreasing=FALSE),]
     rownames(ShadowTimeTable)<-NULL
-
+    
     
     ##Immortal Event Timers##
     ImmortalTimeTable<-read_xlsx("Immortal_Lookup_Table.xlsx")
@@ -955,7 +1023,7 @@ server <- function(input, output, session) {
     ResetTimeTable<-ResetTimeTable[order(ResetTimeTable$Countdown, decreasing=FALSE),]
     rownames(ResetTimeTable)<-NULL
     
-   
+    
     output$ResetTimeTabler<- renderText({
       kable(ResetTimeTable, align = "c", caption="<span style='color: white;'><center><strong>Reset Timers</strong></center></span>") %>%
         kable_styling(
@@ -976,14 +1044,14 @@ server <- function(input, output, session) {
     
     
     if(isolate(input$faction)=="Shadow"){
-        output$ShadowTimerTabler<- renderText({
-          kable(ShadowTimeTable, align = "c", caption="<span style='color: white;'><center><strong>Shadow Event Timers</strong></center></span>") %>%
-            kable_styling(
-              font_size = 15
-            ) 
-        }
-        )
-    
+      output$ShadowTimerTabler<- renderText({
+        kable(ShadowTimeTable, align = "c", caption="<span style='color: white;'><center><strong>Shadow Event Timers</strong></center></span>") %>%
+          kable_styling(
+            font_size = 15
+          ) 
+      }
+      )
+      
     }
     
     if(isolate(input$faction)=="Immortal"){
