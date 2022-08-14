@@ -3,6 +3,7 @@ library(readxl)
 library(lubridate)
 library(hms)
 library(shinydashboard)
+library(fresh)
 library(kableExtra)
 TimeTable<-read_xlsx("DI_Lookup_Table.xlsx")
 ShadowTimeTable<-read_xlsx("Shadow_Lookup_Table.xlsx")
@@ -10,9 +11,26 @@ ImmortalTimeTable<-read_xlsx("Immortal_Lookup_Table.xlsx")
 ResetTimeTable<-read_xlsx("ResetTable.xlsx")
 
 
+mytheme <- create_theme(
+  adminlte_color(
+    light_blue = "#3A3B3C"
+  ),
+  adminlte_sidebar(
+    width = "350px",
+    dark_bg = "#3A3B3C",
+    dark_hover_bg = "#3A3B3C",
+    dark_color = "#3A3B3C"
+  ),
+  adminlte_global(
+    content_bg = "#3A3B3C",
+    box_bg = "#3A3B3C", 
+    info_box_bg = "#3A3B3C"
+  )
+)
+
+
 ##Defines the UI.##
-ui <- dashboardPage(skin="green",
-                    
+ui <- dashboardPage(
                     ##Application title.##
                     dashboardHeader(titleWidth=350, title = "Diablo Immortal Timers"),
                     
@@ -27,11 +45,28 @@ ui <- dashboardPage(skin="green",
                     ##Body outputs.##
                     dashboardBody(#tableOutput("DiagnosticTimeTable"),
                                   #textOutput("TimerSTR"),
+                                  use_theme(mytheme),
                                   fluidRow(
                                     box(tableOutput("TimerTable")),
                                     box(tableOutput("ResetTimeTabler"))
                                   ),
-                                  tableOutput("ShadowTimerTabler")
+                                  tableOutput("ShadowTimerTabler"),
+                                  tags$head(tags$style("#TimerTable{color: white;
+                                                         font-size: 20px;
+                                                         }"
+                                  )
+                                  ),
+                                  tags$head(tags$style("#ResetTimeTabler{color: white;
+                                                         font-size: 20px;
+                                                         }"
+                                  )
+                                  ),
+                                  tags$head(tags$style("#ShadowTimerTabler{color: white;
+                                                         font-size: 20px;
+                                                         }"
+                                  )
+                                  )
+                                  
                     )
 )
 
@@ -922,7 +957,7 @@ server <- function(input, output, session) {
     
    
     output$ResetTimeTabler<- renderText({
-      kable(ResetTimeTable, align = "c", caption="<span style='color: black;'><center><strong>Reset Timers</strong></center></span>") %>%
+      kable(ResetTimeTable, align = "c", caption="<span style='color: white;'><center><strong>Reset Timers</strong></center></span>") %>%
         kable_styling(
           font_size = 15
         ) 
@@ -931,7 +966,7 @@ server <- function(input, output, session) {
     
     
     output$TimerTable<- renderText({
-      kable(TimerDisplayTable, align = "c", caption="<span style='color: black;'><center><strong>World Event Timers</strong></center></span>") %>%
+      kable(TimerDisplayTable, align = "c", caption="<span style='color: white;'><center><strong>World Event Timers</strong></center></span>") %>%
         kable_styling(
           font_size = 15
         ) 
@@ -942,7 +977,7 @@ server <- function(input, output, session) {
     
     if(isolate(input$faction)=="Shadow"){
         output$ShadowTimerTabler<- renderText({
-          kable(ShadowTimeTable, align = "c", caption="<span style='color: black;'><center><strong>Shadow Event Timers</strong></center></span>") %>%
+          kable(ShadowTimeTable, align = "c", caption="<span style='color: white;'><center><strong>Shadow Event Timers</strong></center></span>") %>%
             kable_styling(
               font_size = 15
             ) 
@@ -953,7 +988,7 @@ server <- function(input, output, session) {
     
     if(isolate(input$faction)=="Immortal"){
       output$ShadowTimerTabler<- renderText({
-        kable(ImmortalTimeTable, align = "c", caption="<span style='color: black;'><center><strong>Immortal Event Timers</strong></center></span>") %>%
+        kable(ImmortalTimeTable, align = "c", caption="<span style='color: white;'><center><strong>Immortal Event Timers</strong></center></span>") %>%
           kable_styling(
             font_size = 15
           ) 
