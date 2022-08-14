@@ -163,7 +163,7 @@ server <- function(input, output, session) {
     TimerDisplayTable$Countdown<-as_hms(TimerDisplayTable$Countdown)
     
     ##invalidateLater causes the server to recalculate the time every second, creating the "countdown" effect".##
-    invalidateLater(1000)
+    invalidateLater(5000)
     TimerDisplayTable$Countdown<-as_hms(TimerDisplayTable$Countdown)
 
     
