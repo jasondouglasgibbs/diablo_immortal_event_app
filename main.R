@@ -254,9 +254,9 @@ ShadowTimeTable<-as.data.frame(ShadowTimeTable)
 for(i in 1:1){
   ##Raid the Vault##
   ShadowTimeTable[i, "Start"]<-as.POSIXct(paste0(date(TimeTable[1, "Server_Time"])," ", "12:00:00"), tz='UTC')
-  ShadowTimeTable[i, "Stop"]<-as.POSIXct(paste0(date(TimeTable[1, "Server_Time"])," ", "14:00:00"), tz='UTC')
+  ShadowTimeTable[i, "Stop"]<-as.POSIXct(paste0(date(TimeTable[1, "Server_Time"])," ", "13:00:00"), tz='UTC')
   ShadowTimeTable[i+1, "Start"]<-as.POSIXct(paste0(date(TimeTable[1, "Server_Time"])," ", "19:00:00"), tz='UTC')
-  ShadowTimeTable[i+1, "Stop"]<-as.POSIXct(paste0(date(TimeTable[1, "Server_Time"])," ", "21:00:00"), tz='UTC')
+  ShadowTimeTable[i+1, "Stop"]<-as.POSIXct(paste0(date(TimeTable[1, "Server_Time"])," ", "20:00:00"), tz='UTC')
   
   #Shadow Assembly##
   
@@ -589,9 +589,9 @@ ImmortalTimeTable<-as.data.frame(ImmortalTimeTable)
 for(i in 1:1){
   ##Defend the Vault##
   ImmortalTimeTable[i, "Start"]<-as.POSIXct(paste0(date(TimeTable[1, "Server_Time"])," ", "12:00:00"), tz='UTC')
-  ImmortalTimeTable[i, "Stop"]<-as.POSIXct(paste0(date(TimeTable[1, "Server_Time"])," ", "14:00:00"), tz='UTC')
+  ImmortalTimeTable[i, "Stop"]<-as.POSIXct(paste0(date(TimeTable[1, "Server_Time"])," ", "13:00:00"), tz='UTC')
   ImmortalTimeTable[i+1, "Start"]<-as.POSIXct(paste0(date(TimeTable[1, "Server_Time"])," ", "19:00:00"), tz='UTC')
-  ImmortalTimeTable[i+1, "Stop"]<-as.POSIXct(paste0(date(TimeTable[1, "Server_Time"])," ", "21:00:00"), tz='UTC')
+  ImmortalTimeTable[i+1, "Stop"]<-as.POSIXct(paste0(date(TimeTable[1, "Server_Time"])," ", "20:00:00"), tz='UTC')
   
   ##Battlegrounds##
   ImmortalTimeTable[i+2, "Start"]<-as.POSIXct(paste0(date(TimeTable[1, "Server_Time"])," ", "08:00:00"), tz='UTC')
