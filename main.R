@@ -24,6 +24,8 @@ TimeTable$System_Time<-now()
 TimeTable$UTC_Time<-now("UTC")
 TimeTable<-as.data.frame(TimeTable)
 
+##Daylight Savings Time Offset##
+DLST<-1
 
 
 for(i in 1:nrow(TimeTable)){
@@ -264,11 +266,11 @@ for(i in 1:1){
   SADay<-TimeTable[i,"Server_Time"]
   if(SADate=="Sunday"){
     ShadowTimeTable[i+2, "Active?"]<-NA
-    ShadowTimeTable[i+2, "Start"]<-as.POSIXct(paste0(date(TimeTable[1, "Server_Time"])," ", "18:00:00"), tz='UTC')
-    ShadowTimeTable[i+2, "Stop"]<-as.POSIXct(paste0(date(TimeTable[1, "Server_Time"])," ", "20:00:00"), tz='UTC')
+    ShadowTimeTable[i+2, "Start"]<-as.POSIXct(paste0(date(TimeTable[1, "Server_Time"])," ", "18:00:00"), tz='UTC')+hms(hours=DLST)
+    ShadowTimeTable[i+2, "Stop"]<-as.POSIXct(paste0(date(TimeTable[1, "Server_Time"])," ", "20:00:00"), tz='UTC')+hms(hours=DLST)
   }else{
-    ShadowTimeTable[i+2, "Start"]<-as.POSIXct(paste0(date(TimeTable[1, "Server_Time"])," ", "18:00:00"), tz='UTC')
-    ShadowTimeTable[i+2, "Stop"]<-as.POSIXct(paste0(date(TimeTable[1, "Server_Time"])," ", "20:00:00"), tz='UTC')
+    ShadowTimeTable[i+2, "Start"]<-as.POSIXct(paste0(date(TimeTable[1, "Server_Time"])," ", "18:00:00"), tz='UTC')+hms(hours=DLST)
+    ShadowTimeTable[i+2, "Stop"]<-as.POSIXct(paste0(date(TimeTable[1, "Server_Time"])," ", "20:00:00"), tz='UTC')+hms(hours=DLST)
   }
   
   

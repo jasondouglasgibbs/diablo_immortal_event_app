@@ -8,7 +8,8 @@ TimeTable<-read_xlsx("DI_Lookup_Table.xlsx")
 ShadowTimeTable<-read_xlsx("Shadow_Lookup_Table.xlsx")
 ImmortalTimeTable<-read_xlsx("Immortal_Lookup_Table.xlsx")
 ResetTimeTable<-read_xlsx("ResetTable.xlsx")
-
+##Daylight Savings Time Offset##
+DLST<-1
 
 
 ##Defines the UI.##
@@ -419,11 +420,11 @@ server <- function(input, output, session) {
       SADay<-TimeTable[i,"Server_Time"]
       if(SADate=="Sunday"){
         ShadowTimeTable[i+2, "Active?"]<-NA
-        ShadowTimeTable[i+2, "Start"]<-as.POSIXct(paste0(date(TimeTable[1, "Server_Time"])," ", "18:00:00"), tz='UTC')
-        ShadowTimeTable[i+2, "Stop"]<-as.POSIXct(paste0(date(TimeTable[1, "Server_Time"])," ", "20:00:00"), tz='UTC')
+        ShadowTimeTable[i+2, "Start"]<-as.POSIXct(paste0(date(TimeTable[1, "Server_Time"])," ", "18:00:00"), tz='UTC')+hms(hours=DLST)
+        ShadowTimeTable[i+2, "Stop"]<-as.POSIXct(paste0(date(TimeTable[1, "Server_Time"])," ", "20:00:00"), tz='UTC')+hms(hours=DLST)
       }else{
-        ShadowTimeTable[i+2, "Start"]<-as.POSIXct(paste0(date(TimeTable[1, "Server_Time"])," ", "18:00:00"), tz='UTC')
-        ShadowTimeTable[i+2, "Stop"]<-as.POSIXct(paste0(date(TimeTable[1, "Server_Time"])," ", "20:00:00"), tz='UTC')
+        ShadowTimeTable[i+2, "Start"]<-as.POSIXct(paste0(date(TimeTable[1, "Server_Time"])," ", "18:00:00"), tz='UTC')+hms(hours=DLST)
+        ShadowTimeTable[i+2, "Stop"]<-as.POSIXct(paste0(date(TimeTable[1, "Server_Time"])," ", "20:00:00"), tz='UTC')+hms(hours=DLST)
       }
       
       
