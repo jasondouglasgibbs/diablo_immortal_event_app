@@ -5,9 +5,12 @@ library(readxl)
 library(lubridate)
 library(hms)
 
+##Daylight Savings Time Offset##
+DLST<--1
+
+
 TimeTable<-read_xlsx("DI_Lookup_Table.xlsx")
 TimeTable$Time_Zone_Number<-as.integer(TimeTable$Time_Zone_Number)
-TimeTable$Server_Time<-as.POSIXct(TimeTable$Server_Time, tz="UTC")
 TimeTable$Server_Time<-as.POSIXct(TimeTable$Server_Time, tz="UTC")
 TimeTable$Ancient_Nightmare_12PM<-as.POSIXct(TimeTable$Ancient_Nightmare_12PM, tz="UTC")
 TimeTable$Ancient_Nightmare_830PM<-as.POSIXct(TimeTable$Ancient_Nightmare_830PM, tz="UTC")
@@ -24,16 +27,12 @@ TimeTable$System_Time<-now()
 TimeTable$UTC_Time<-now("UTC")
 TimeTable<-as.data.frame(TimeTable)
 
-##Daylight Savings Time Offset##
-DLST<-1
-
-
 for(i in 1:nrow(TimeTable)){
-  ##Finds server time based on the current UTC time.##
+  ##Finds server time based on the current UTC time and DLST offset.##
   if(grepl("-", TimeTable[i,"Time_Zone"])){
-    TimeTable[i,"Server_Time"]<-force_tz(TimeTable[i,"UTC_Time"]-hours(TimeTable[i,"Time_Zone_Number"]), 'UTC')
+    TimeTable[i,"Server_Time"]<-force_tz(TimeTable[i,"UTC_Time"]-hours(TimeTable[i,"Time_Zone_Number"])+hms(hours=DLST), 'UTC')
   }else{
-    TimeTable[i,"Server_Time"]<-force_tz(TimeTable[i,"UTC_Time"]+hours(TimeTable[i,"Time_Zone_Number"]), 'UTC')
+    TimeTable[i,"Server_Time"]<-force_tz(TimeTable[i,"UTC_Time"]+hours(TimeTable[i,"Time_Zone_Number"])+hms(hours=DLST), 'UTC')
     
   }
 
@@ -114,14 +113,6 @@ for(i in 1:nrow(TimeTable)){
 
 TimerDisplayTable<-read_xlsx("TimerDisplayTable.xlsx")
 TimerDisplayTable$Countdown<-as_hms(TimerDisplayTable$Countdown)
-
-
-if(grepl("-", TimeTable[1,"Time_Zone"])){
-  TimeTable[1,"Server_Time"]<-force_tz(TimeTable[1,"UTC_Time"]-hours(TimeTable[1,"Time_Zone_Number"]), 'UTC')
-}else{
-  TimeTable[1,"Server_Time"]<-force_tz(TimeTable[1,"UTC_Time"]+hours(TimeTable[1,"Time_Zone_Number"]), 'UTC')
-  
-}
 
 
 ##Ancient Nightmare.##
@@ -266,11 +257,11 @@ for(i in 1:1){
   SADay<-TimeTable[i,"Server_Time"]
   if(SADate=="Sunday"){
     ShadowTimeTable[i+2, "Active?"]<-NA
-    ShadowTimeTable[i+2, "Start"]<-as.POSIXct(paste0(date(TimeTable[1, "Server_Time"])," ", "18:00:00"), tz='UTC')+hms(hours=DLST)
-    ShadowTimeTable[i+2, "Stop"]<-as.POSIXct(paste0(date(TimeTable[1, "Server_Time"])," ", "20:00:00"), tz='UTC')+hms(hours=DLST)
+    ShadowTimeTable[i+2, "Start"]<-as.POSIXct(paste0(date(TimeTable[1, "Server_Time"])," ", "19:00:00"), tz='UTC')
+    ShadowTimeTable[i+2, "Stop"]<-as.POSIXct(paste0(date(TimeTable[1, "Server_Time"])," ", "21:00:00"), tz='UTC')
   }else{
-    ShadowTimeTable[i+2, "Start"]<-as.POSIXct(paste0(date(TimeTable[1, "Server_Time"])," ", "18:00:00"), tz='UTC')+hms(hours=DLST)
-    ShadowTimeTable[i+2, "Stop"]<-as.POSIXct(paste0(date(TimeTable[1, "Server_Time"])," ", "20:00:00"), tz='UTC')+hms(hours=DLST)
+    ShadowTimeTable[i+2, "Start"]<-as.POSIXct(paste0(date(TimeTable[1, "Server_Time"])," ", "19:00:00"), tz='UTC')
+    ShadowTimeTable[i+2, "Stop"]<-as.POSIXct(paste0(date(TimeTable[1, "Server_Time"])," ", "21:00:00"), tz='UTC')
   }
   
   

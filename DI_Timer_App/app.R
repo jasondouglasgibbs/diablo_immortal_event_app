@@ -9,7 +9,7 @@ ShadowTimeTable<-read_xlsx("Shadow_Lookup_Table.xlsx")
 ImmortalTimeTable<-read_xlsx("Immortal_Lookup_Table.xlsx")
 ResetTimeTable<-read_xlsx("ResetTable.xlsx")
 ##Daylight Savings Time Offset##
-DLST<-1
+DLST<--1
 
 
 ##Defines the UI.##
@@ -166,13 +166,14 @@ server <- function(input, output, session) {
     TimeTable<-filter(TimeTable, TimeTable$Server_Name==isolate(input$server))
     
     for(i in 1:nrow(TimeTable)){
-      ##Finds the Diablo Immortal server time based on the current UTC time.##
+      ##Finds server time based on the current UTC time and DLST offset.##
       if(grepl("-", TimeTable[i,"Time_Zone"])){
-        TimeTable[i,"Server_Time"]<-force_tz(TimeTable[i,"UTC_Time"]-hours(TimeTable[i,"Time_Zone_Number"]), 'UTC')
+        TimeTable[i,"Server_Time"]<-force_tz(TimeTable[i,"UTC_Time"]-hours(TimeTable[i,"Time_Zone_Number"])+hms(hours=DLST), 'UTC')
       }else{
-        TimeTable[i,"Server_Time"]<-force_tz(TimeTable[i,"UTC_Time"]+hours(TimeTable[i,"Time_Zone_Number"]), 'UTC')
+        TimeTable[i,"Server_Time"]<-force_tz(TimeTable[i,"UTC_Time"]+hours(TimeTable[i,"Time_Zone_Number"])+hms(hours=DLST), 'UTC')
         
       }
+      
       
       ##Finds the weekday for use in certain timers.##
       ##Ancient Nightmare.##
@@ -420,11 +421,11 @@ server <- function(input, output, session) {
       SADay<-TimeTable[i,"Server_Time"]
       if(SADate=="Sunday"){
         ShadowTimeTable[i+2, "Active?"]<-NA
-        ShadowTimeTable[i+2, "Start"]<-as.POSIXct(paste0(date(TimeTable[1, "Server_Time"])," ", "18:00:00"), tz='UTC')+hms(hours=DLST)
-        ShadowTimeTable[i+2, "Stop"]<-as.POSIXct(paste0(date(TimeTable[1, "Server_Time"])," ", "20:00:00"), tz='UTC')+hms(hours=DLST)
+        ShadowTimeTable[i+2, "Start"]<-as.POSIXct(paste0(date(TimeTable[1, "Server_Time"])," ", "19:00:00"), tz='UTC')+hms(hours=DLST)
+        ShadowTimeTable[i+2, "Stop"]<-as.POSIXct(paste0(date(TimeTable[1, "Server_Time"])," ", "21:00:00"), tz='UTC')+hms(hours=DLST)
       }else{
-        ShadowTimeTable[i+2, "Start"]<-as.POSIXct(paste0(date(TimeTable[1, "Server_Time"])," ", "18:00:00"), tz='UTC')+hms(hours=DLST)
-        ShadowTimeTable[i+2, "Stop"]<-as.POSIXct(paste0(date(TimeTable[1, "Server_Time"])," ", "20:00:00"), tz='UTC')+hms(hours=DLST)
+        ShadowTimeTable[i+2, "Start"]<-as.POSIXct(paste0(date(TimeTable[1, "Server_Time"])," ", "19:00:00"), tz='UTC')+hms(hours=DLST)
+        ShadowTimeTable[i+2, "Stop"]<-as.POSIXct(paste0(date(TimeTable[1, "Server_Time"])," ", "21:00:00"), tz='UTC')+hms(hours=DLST)
       }
       
       
@@ -1033,24 +1034,27 @@ server <- function(input, output, session) {
     }
     )
     
-    
     output$TimerTable<- renderText({
       kable(TimerDisplayTable, align = "c", caption="<span style='color: white;'><center><strong>World Event Timers</strong></center></span>") %>%
         kable_styling(
           font_size = 15
-        ) 
+          )
+      
     }
     )
     
     
-    
+
+ 
     if(isolate(input$faction)=="Shadow"){
       output$ShadowTimerTabler<- renderText({
         kable(ShadowTimeTable, align = "c", caption="<span style='color: white;'><center><strong>Shadow Event Timers</strong></center></span>") %>%
           kable_styling(
             font_size = 15
-          ) 
+          )%>%
+          row_spec(which(ShadowTimeTable$`Active?`=="Yes"), bold = T, color = "green", background = "black")
       }
+      
       )
       
     }
@@ -1060,7 +1064,8 @@ server <- function(input, output, session) {
         kable(ImmortalTimeTable, align = "c", caption="<span style='color: white;'><center><strong>Immortal Event Timers</strong></center></span>") %>%
           kable_styling(
             font_size = 15
-          ) 
+          )%>%
+          row_spec(which(ImmortalTimeTable$`Active?`=="Yes"), bold = T, color = "green", background = "black") 
       }
       )
       
