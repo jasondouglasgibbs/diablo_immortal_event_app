@@ -870,7 +870,7 @@ server <- function(input, output, session) {
       ##Active Logic.##
       if(difftime(ImmortalTimeTable[i+3, "Stop"], TimeTable[1,"Server_Time"])<0){
         ImmortalTimeTable[i+3,"Active?"]<-NA
-      }else if(difftime(ImmortalTimeTable[i+4, "Start"], TimeTable[1,"Server_Time"])>=0){
+      }else if(difftime(ImmortalTimeTable[i+3, "Start"], TimeTable[1,"Server_Time"])>=0){
         ImmortalTimeTable[i+3,"Active?"]<-"No"
       }else if(difftime(ImmortalTimeTable[i+3, "Start"], TimeTable[1,"Server_Time"])<=0&&difftime(ImmortalTimeTable[i+3, "Stop"], TimeTable[1,"Server_Time"])>=0){
         ImmortalTimeTable[i+3,"Active?"]<-"Yes"
