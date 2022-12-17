@@ -1029,9 +1029,23 @@ server <- function(input, output, session) {
       WeeklyDate<-weekdays(WeeklyDay)
     }
     WeeklyDay<-as.POSIXct(paste0(date(WeeklyDay)," ", "03:00:00"), tz='UTC')
-    #WeeklyResetTime<-as.POSIXct(paste0(date(TimeTable[1, "Server_Time"])," ", "20:00:00"), tz='UTC')
     WeeklyCountdown<-round_hms(as_hms(difftime(WeeklyDay, TimeTable[1, "Server_Time"])), digits=0)
     ResetTimeTable[4, "Countdown"]<-WeeklyCountdown
+    
+    
+    
+    ##Raid Reset.##
+    
+    RaidDate<-weekdays(TimeTable[i, "Server_Time"])
+    RaidDay<-TimeTable[i,"Server_Time"]
+    
+    while(RaidDate!="Monday"&&RaidDate!="Thursday"){
+      RaidDay<-RaidDay+days(1)
+      RaidDate<-weekdays(RaidDay)
+    }
+    RaidDay<-as.POSIXct(paste0(date(RaidDay)," ", "03:00:00"), tz='UTC')
+    RaidCountdown<-round_hms(as_hms(difftime(RaidDay, TimeTable[1, "Server_Time"])), digits=0)
+    ResetTimeTable[5, "Countdown"]<-RaidCountdown
     
     
     ResetTimeTable<-as.data.frame(filter(ResetTimeTable, ResetTimeTable$Countdown>0))
