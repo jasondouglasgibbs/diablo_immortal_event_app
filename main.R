@@ -22,7 +22,8 @@ TimeTable$Demon_Gates_12PM<-as.POSIXct(TimeTable$Demon_Gates_12PM, tz="UTC")
 TimeTable$Demon_Gates_830PM<-as.POSIXct(TimeTable$Demon_Gates_830PM, tz="UTC")
 TimeTable$Demon_Gates_10PM<-as.POSIXct(TimeTable$Demon_Gates_10PM, tz="UTC")
 TimeTable$Ancient_Arena_930PM<-as.POSIXct(TimeTable$Ancient_Arena_930PM, tz="UTC")
-TimeTable$Wrathborne_Invasion_12PM<-as.POSIXct(TimeTable$Wrathborne_Invasion_12PM, tz="UTC")
+TimeTable$Wrathborne_Invasion_1230PM<-as.POSIXct(TimeTable$Wrathborne_Invasion_1230PM, tz="UTC")
+TimeTable$Wrathborne_Invasion_9PM<-as.POSIXct(TimeTable$Wrathborne_Invasion_9PM, tz="UTC")
 TimeTable$System_Time<-now()
 TimeTable$UTC_Time<-now("UTC")
 TimeTable<-as.data.frame(TimeTable)
@@ -104,9 +105,11 @@ for(i in 1:nrow(TimeTable)){
   ##Wrathborne Invasion#
   WIDay<-TimeTable[i,"Server_Time"]
   
-  TimeTable[i, "Wrathborne_Invasion_12PM"]<-force_tz(WIDay,'UTC')
-  TimeTable[i, "Wrathborne_Invasion_12PM"]<-as.POSIXct(paste0(date(TimeTable[i, "Wrathborne_Invasion_12PM"])," ", "12:00:00"), tz='UTC')
+  TimeTable[i, "Wrathborne_Invasion_1230PM"]<-force_tz(WIDay,'UTC')
+  TimeTable[i, "Wrathborne_Invasion_1230PM"]<-as.POSIXct(paste0(date(TimeTable[i, "Wrathborne_Invasion_1230PM"])," ", "12:30:00"), tz='UTC')
   
+  TimeTable[i, "Wrathborne_Invasion_9PM"]<-force_tz(WIDay,'UTC')
+  TimeTable[i, "Wrathborne_Invasion_9PM"]<-as.POSIXct(paste0(date(TimeTable[i, "Wrathborne_Invasion_9PM"])," ", "21:00:00"), tz='UTC')
 }
 
 
@@ -217,15 +220,23 @@ TimerDisplayTable[10,2]<-countdowntime
 
 
 ##Wrathborne Invasion.##
-countdowntime<-round_hms(as_hms(difftime(TimeTable[1, "Wrathborne_Invasion_12PM"], TimeTable[1,"Server_Time"])), digits=0)
+countdowntime<-round_hms(as_hms(difftime(TimeTable[1, "Wrathborne_Invasion_1230PM"], TimeTable[1,"Server_Time"])), digits=0)
 if(grepl("-",countdowntime)){
   countdowntime<-NA
 }else{
-  countdowntime<-round_hms(as_hms(difftime(TimeTable[1, "Wrathborne_Invasion_12PM"], TimeTable[1,"Server_Time"])), digits=0)
+  countdowntime<-round_hms(as_hms(difftime(TimeTable[1, "Wrathborne_Invasion_1230PM"], TimeTable[1,"Server_Time"])), digits=0)
 }
 
 TimerDisplayTable[11,2]<-countdowntime
 
+countdowntime<-round_hms(as_hms(difftime(TimeTable[1, "Wrathborne_Invasion_9PM"], TimeTable[1,"Server_Time"])), digits=0)
+if(grepl("-",countdowntime)){
+  countdowntime<-NA
+}else{
+  countdowntime<-round_hms(as_hms(difftime(TimeTable[1, "Wrathborne_Invasion_9PM"], TimeTable[1,"Server_Time"])), digits=0)
+}
+
+TimerDisplayTable[12,2]<-countdowntime
 
 
 #Ordering and preping for display.##
