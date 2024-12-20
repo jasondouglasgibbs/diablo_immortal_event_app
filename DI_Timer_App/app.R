@@ -1054,10 +1054,12 @@ server <- function(input, output, session) {
     
     
     output$ResetTimeTabler<- renderText({
-      kable(ResetTimeTable, align = "c", caption="<span style='color: white;'><center><strong>Reset Timers</strong></center></span>") %>%
+      kable(as.data.frame(ResetTimeTable), align = "c", caption="<span style='color: white;'><center><strong>Reset Timers</strong></center></span>") %>%
         kable_styling(
           font_size = 15
-        ) 
+        )%>%
+        column_spec(column=1:ncol(ResetTimeTable),color="white")%>%
+        row_spec(row=0:nrow(ResetTimeTable), color="white")
     }
     )
     
@@ -1065,7 +1067,9 @@ server <- function(input, output, session) {
       kable(TimerDisplayTable, align = "c", caption="<span style='color: white;'><center><strong>World Event Timers</strong></center></span>") %>%
         kable_styling(
           font_size = 15
-          )
+          )%>%
+        column_spec(column=1:ncol(TimerDisplayTable),color="white")%>%
+        row_spec(row=0:nrow(TimerDisplayTable), color="white")
       
     }
     )
@@ -1079,6 +1083,8 @@ server <- function(input, output, session) {
           kable_styling(
             font_size = 15
           )%>%
+          column_spec(column=1:ncol(TimerDisplayTable),color="white")%>%
+          row_spec(row=0:nrow(TimerDisplayTable), color="white")%>%
           row_spec(which(ShadowTimeTable$`Active?`=="Yes"), bold = T, color = "green", background = "black")
       }
       
